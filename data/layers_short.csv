@@ -1,0 +1,9 @@
+﻿name,gee_path,date_format,scale
+prism,OREGONSTATE/PRISM/AN81d,%Y%m%d,500
+landsat,UMT/NTSG/v2/LANDSAT/GPP,%Y%j,30
+pml,CAS/IGSNRR/PML/V2,%Y-%m-%d,500
+modis,MODIS/006/MOD16A2,%Y_%m_%d,250
+modis,MODIS/006/MOD13Q1,%Y_%m_%d,250
+modis,MODIS/006/MOD17A2H,%Y_%m_%d,250
+modis,MODIS/006/MYD17A2H,%Y_%m_%d,250
+landsat,LANDSAT/LE07/C01/T1_8DAY_NDWI,%Y%m%d,30
