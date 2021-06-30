@@ -20,7 +20,7 @@ gage = 11134800
 start = '1988-09-30'
 stop = '2019-11-01'
 beginning = 2003
-end = 2003
+end = 2004
 
 
 
@@ -63,11 +63,10 @@ def main():
 
 
     all_points = pd.DataFrame()
-
+    outputfile = 'exports/watershed.csv'
   # for i in range(len(pts)):
   #   print('Getting data for point={}'.format(i))
-  #   temp_point = pd.DataFrame({'id':pd.date_range(str(start)+"-01-01", str(end)+"-01-01"), 'point': names[i]})
-
+    temp_point = pd.DataFrame({'id':pd.date_range(str(beginning)+"-01-01", str(end)+"-01-01")})#, 'point': names[i]})
     for d in range(len(assets['gee_path'])):
       path = assets['gee_path'][d]
       collection_short_name=assets['name'][d]+"_"
@@ -90,25 +89,31 @@ def main():
         yearend = str(year+1)
         testextract = ee.ImageCollection(path).filterDate(yearstart, yearend).filterBounds(bounding_box).map(extract).getInfo()
         
+        dateformat=assets['date_format'][d]
         #test = get_data_df(testextract, dateformat=assets['date_format'][d], collection_short_name=collection_short_name)
         d = testextract
         df = pd.json_normalize(d['features'])
-
-        df.to_csv('test_watershed.csv', mode='a', header=False)
+        ##print(df.head())
         #print(df.head())
+        #df = df[df.columns[df.columns.str.contains('index')].append(df.columns[df.columns.str.contains('properties')])]
+        #print(df.head())
+        df['id'] = pd.to_datetime(df['properties.system:index'], format= dateformat)
         #df = df[df.columns[df.columns.str.contains('id')].append(df.columns[df.columns.str.contains('properties')])]
-        #df['id'] = pd.to_datetime(df['id'].values, format=dateformat)
-        #df = df.set_index('id')
-        #oldnames = df.columns[df.columns.str.contains('properties')]
-        #df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
-        #annual_temp = annual_temp.append(test)
-      #temp_point = pd.merge(temp_point, annual_temp, how='left', on=['id'])
+        df = df.drop(df.filter(regex='index').columns, axis=1)
+        df = df.set_index('id')
+        oldnames = df.columns[df.columns.str.contains('properties')]
+        df = df[df.columns[df.columns.str.contains('properties')]]
+        df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
+        print(df.head())
+        annual_temp = annual_temp.append(df)
+      temp_point = pd.merge(temp_point, annual_temp, how='left', on=['id'])
+      #temp_point.to_csv('exports/{}.csv'.format(collection_short_name), mode='a', header=True)
 
       #print(temp_point.head())
 
-    #all_points = all_points.append(temp_point)
+    all_points = all_points.append(temp_point)
 
-    #all_points.to_csv(outputfile, mode='a', header=False)
+    all_points.to_csv(outputfile, mode='a', header=True)
 
 
 """
