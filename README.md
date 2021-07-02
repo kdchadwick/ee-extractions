@@ -1,5 +1,5 @@
 # Common functions and methods for projects in the rock moisture ensemble
 
-main scripts include:
+Scripts with 'main' include:
 
-* ee_exports
+* ee_extractions
