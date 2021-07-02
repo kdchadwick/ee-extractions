@@ -9,7 +9,7 @@ def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
 
     ## Get watershed geometry and bounding box
     if watershed == True:
-        basin, fts, lat, lon = getBasin(gage)
+        basin, pts, lat, lon = getBasin(gage)
 
         # Setup edges for bounding box   
         min_long = math.floor(lon) + 1

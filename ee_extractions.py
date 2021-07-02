@@ -20,9 +20,9 @@ ee.Initialize()
 
 ### TO CHANGE BETWEEN EXTRACTING WATERSHED VIA GAGE ID AND POINTS, SET WATERSHED = TRUE OR FALSE
 watershed = False
-gage = 11134800
-outputfile = 'exports/points_test1.csv'
+gage = 11134800 #set these as optional inputs?
 point_csv = 'data/coordinates.csv'
+outputfile = 'exports/points_dana.csv'
 
 def main():
   assets = pd.read_csv('data/layers_short.csv')
