@@ -32,9 +32,6 @@ def getFlow(gage, start = '1988-01-01', stop = '2020-01-01'):
     df = df[['q_cfs','id']]
     df['q_cfs'] = df['q_cfs'].astype(float, errors='ignore')  #this is needed because sometimes there are non-numeric entries and we want to ignore them
     df['q_m3day']= (86400*df['q_cfs'])/(35.31) #m3/day
-    print(df.describe())
-    print(df.head())
-    print(df.tail())
     # Calculate drainage area in m^2
     drainage_area_m2=basin.to_crs('epsg:26910').geometry.area 
 

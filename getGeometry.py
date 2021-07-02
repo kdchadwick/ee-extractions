@@ -5,7 +5,7 @@ import math
 from getFlow import getBasin
  
 
-def getGeometry(watershed = True, gage = 11134800, point_csv = 'data/coordinates.csv'):
+def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
 
     ## Get watershed geometry and bounding box
     if watershed == True:
@@ -25,8 +25,6 @@ def getGeometry(watershed = True, gage = 11134800, point_csv = 'data/coordinates
 
         names = []
         
-        return fts, bounding_box
-
     ## Get all lat/longs geometries from points and bounding box
     else:
         locs = pd.read_csv('data/coordinates.csv')
@@ -45,4 +43,4 @@ def getGeometry(watershed = True, gage = 11134800, point_csv = 'data/coordinates
                 [math.ceil(max(locs['Long'])), math.ceil(max(locs['Lat']))]]])
 
         
-        return pts, bounding_box, names
+    return pts, bounding_box, names
