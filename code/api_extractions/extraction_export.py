@@ -11,9 +11,9 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
 
     for d in range(len(assets['gee_path'])):
       path = assets['gee_path'][d]
-      collection_short_name=assets['name'][d]+"_"
-      beginning = assets['beginning_year'][d]
-      end = assets['end_year'][d]
+      collection_short_name = assets['name'][d]+"_"
+      beginning = int(assets['beginning_year'][d])
+      end = int(assets['end_year'][d])
       dateformat=assets['date_format'][d]
 
       def extract(image):

@@ -3,3 +3,4 @@
 Scripts with 'main' include:
 
 * ee_extractions
+* direct_storage
