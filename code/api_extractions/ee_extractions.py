@@ -31,13 +31,13 @@ def main():
   parser.add_argument('-wshd', type=str, default='False')
   parser.add_argument('-gage', default=11372000, type=int)
 
-  print('ee_extractions.py is parsing and cleaning arguments \n')
+  print('\n \n ee_extractions.py is parsing and cleaning arguments \n')
   args = parser.parse_args()
   if args.wshd.lower() == 'true':
       args.wshd = True
 
   if os.path.isdir(args.output_directory) == True:
-    print('this output directory already exists')
+    print('WARNING: this output directory already exists. \n Exiting... \n \n \n')
     sys.exit()
   else: 
     subprocess.call('mkdir ' + os.path.join(args.output_directory), shell=True)
@@ -45,6 +45,7 @@ def main():
 
   assets = pd.read_csv(args.asset_layers_csv)
   assets['scale'] = assets['scale'].astype('float')
+  print('Assets to be extracted: \n ')
   print(assets.head())
   pts, bounding_box, names = getGeometry(args.wshd, args.gage, args.point_csv)
   extraction_export(assets, pts, bounding_box, names, args.output_directory, args.wshd, args.gage)

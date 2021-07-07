@@ -26,7 +26,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
         return fts_reduced
 
 
-      print('Extracting data from asset {}'.format(path))
+      print('\n \n Extracting data from asset {}'.format(path))
       annual_temp=pd.DataFrame()
 
       for year in range(beginning, end):
@@ -49,7 +49,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
     start_min = assets['beginning_year'].min()
     end_max = assets['end_year'].max()
     for i in range(len(pts)):
-      print('Getting data for point={}'.format(i))
+      print('\n \n Getting data for point={}'.format(i))
       temp_point = pd.DataFrame({'id':pd.date_range(str(start_min)+"-01-01", str(end_max)+"-01-01"), 'point': names[i]})
       #temp_point = pd.DataFrame({'id':pd.date_range(str(2003)+"-01-01", str(2003)+"-01-02")})
 

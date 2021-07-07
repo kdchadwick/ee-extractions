@@ -7,8 +7,9 @@ from getFlow import getBasin
 
 def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
 
-    ## Get watershed geometry and bounding box
+    print('\n \nRunning getGeometry.py')
     if watershed == True:
+        print('From USGS API: Getting watershed geometry and bounding box')
         basin, pts, lat, lon = getBasin(gage)
 
         # Setup edges for bounding box   
@@ -25,8 +26,9 @@ def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
 
         names = []
         
-    ## Get all lat/longs geometries from points and bounding box
+    
     else:
+        print('Getting all lat/longs geometries from points list and define bounding box')
         locs = pd.read_csv('data/coordinates.csv')
         coordinates = locs[['Long', 'Lat']].values.tolist()
         names = locs['Site Name']

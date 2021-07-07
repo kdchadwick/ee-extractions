@@ -6,6 +6,7 @@ ee.Initialize()
 
 
 def getBasin(gage):
+    print('\n running getBasin function from getFlow.py')
     basin = gp.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)
     flowlines=gp.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
     coords = [item for item in basin.geometry[0].exterior.coords]
@@ -20,6 +21,7 @@ def getBasin(gage):
     return basin, fts, site_lat, site_long
 
 def getFlow(gage, start = '1988-01-01', stop = '2020-01-01'):
+    print('\n running getFlow function from getFlow.py')
     site = str(gage)
     basin = gp.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)
 
