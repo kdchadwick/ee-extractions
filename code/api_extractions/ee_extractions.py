@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import Image
 import os
+import json
 import sys
 import argparse
 import subprocess
@@ -36,17 +37,25 @@ def main():
   if args.wshd.lower() == 'true':
       args.wshd = True
 
+
   if os.path.isdir(args.output_directory) == True:
     print('WARNING: this output directory already exists. \n Exiting... \n \n \n')
     sys.exit()
   else: 
     subprocess.call('mkdir ' + os.path.join(args.output_directory), shell=True)
+    subprocess.call('mkdir ' + os.path.join(args.output_directory, 'settings'), shell=True)
 
+  with open(os.path.join(args.output_directory, 'settings', 'input_args.txt'), 'w') as f:
+      json.dump(args.__dict__, f, indent=2)
 
   assets = pd.read_csv(args.asset_layers_csv)
   assets['scale'] = assets['scale'].astype('float')
   print('Assets to be extracted: \n ')
   print(assets.head())
+  
+  assets.to_csv(os.path.join(args.output_directory, 'settings', 'assets.csv'))
+  subprocess.call('cp ' + os.path.join(args.point_csv) +' ' + os.path.join(args.output_directory, 'settings', 'export_coords.csv'), shell=True)
+  
   pts, bounding_box, names = getGeometry(args.wshd, args.gage, args.point_csv)
   extraction_export(assets, pts, bounding_box, names, args.output_directory, args.wshd, args.gage)
 
