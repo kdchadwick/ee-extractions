@@ -37,7 +37,7 @@ def main():
   if args.wshd.lower() == 'true':
       args.wshd = True
 
-
+  print('Checking and generating output directory')
   if os.path.isdir(args.output_directory) == True:
     print('WARNING: this output directory already exists. \n Exiting... \n \n \n')
     sys.exit()
@@ -45,14 +45,14 @@ def main():
     subprocess.call('mkdir ' + os.path.join(args.output_directory), shell=True)
     subprocess.call('mkdir ' + os.path.join(args.output_directory, 'settings'), shell=True)
 
-  with open(os.path.join(args.output_directory, 'settings', 'input_args.txt'), 'w') as f:
-      json.dump(args.__dict__, f, indent=2)
-
   assets = pd.read_csv(args.asset_layers_csv)
   assets['scale'] = assets['scale'].astype('float')
   print('Assets to be extracted: \n ')
   print(assets.head())
   
+  print('\n \nSaving inputs and args to settings folder in {}'.format(args.output_directory))
+  with open(os.path.join(args.output_directory, 'settings', 'input_args.txt'), 'w') as f:
+    json.dump(args.__dict__, f, indent=2)
   assets.to_csv(os.path.join(args.output_directory, 'settings', 'assets.csv'))
   subprocess.call('cp ' + os.path.join(args.point_csv) +' ' + os.path.join(args.output_directory, 'settings', 'export_coords.csv'), shell=True)
   
