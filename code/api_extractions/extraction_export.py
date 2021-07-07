@@ -2,6 +2,7 @@ from get_data_df import get_data_df
 from getFlow import getFlow
 import pandas as pd
 import ee
+import os
 
 def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, gage):
   all_points = pd.DataFrame()
@@ -42,7 +43,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
     all_points = all_points.append(temp_point)
     flow = getFlow(gage)
     all_points = pd.merge(all_points, flow, how = 'outer', on = ['id'], sort = True)
-    all_points.to_csv(outputfile, mode='a', header=True)
+    all_points.to_csv(os.path.join(outputfile, 'point_extractions_w_merge_on_date.csv'), mode='a', header=True)
 
   else:
     start_min = assets['beginning_year'].min()
@@ -83,4 +84,4 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
 
       all_points = all_points.append(temp_point)
 
-    all_points.to_csv(outputfile, mode='a', header=True)
+    all_points.to_csv(os.path.join(outputfile, 'watershed_extractions_w_merge_on_date.csv'), mode='a', header=True)
