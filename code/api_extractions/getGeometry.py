@@ -2,10 +2,11 @@
 import ee
 import pandas as pd
 import math
+import numpy as np
 from getFlow import getBasin
  
 
-def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
+def getGeometry(watershed, gage = np.nan, point_csv = np.nan):
 
     print('\n \nRunning getGeometry.py')
     if watershed == True:
