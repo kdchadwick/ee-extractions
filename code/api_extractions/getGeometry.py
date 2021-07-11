@@ -2,7 +2,7 @@
 import ee
 import pandas as pd
 import math
-from getFlow import getBasin
+from usgs_basin_geometry import usgs_basin_geometry
  
 
 def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
@@ -10,7 +10,7 @@ def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
     print('\n \nRunning getGeometry.py')
     if watershed == True:
         print('From USGS API: Getting watershed geometry and bounding box')
-        basin, pts, lat, lon = getBasin(gage)
+        basin, pts, lat, lon = usgs_basin_geometry(gage)
 
         # Setup edges for bounding box   
         min_long = math.floor(lon) + 1

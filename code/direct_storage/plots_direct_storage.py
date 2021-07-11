@@ -42,7 +42,8 @@ def plot_all_timeseries(recession, dt, basin_name, start_date, end_date):
   ax1.set_xlabel('')
   f.autofmt_xdate()
   plt.tight_layout()
-  plt.savefig('figs/' + basin_name + '_' + start_date + '_' + end_date + '.pdf')
+  return f
+  #plt.savefig('figs/' + basin_name + '_' + start_date + '_' + end_date + '.pdf')
 
 def bar_indirect(annualmax_indirect, maxyears, basin_name):
     
@@ -65,8 +66,9 @@ def bar_indirect(annualmax_indirect, maxyears, basin_name):
   plt.axhspan(lower,upper,color='k',alpha=0.1)
 
   plt.xlim([-0.5, len(maxyears) - 1.5])
-  plt.ylim([0,600])
+  #plt.ylim([0,600])
   plt.title('Indirect storage max by water year ' + basin_name)
   plt.xlabel('Water year')
 
-  plt.savefig('figs/' + basin_name + '_maxes.pdf')
+  return f
+  #plt.savefig('figs/' + basin_name + '_maxes.pdf')

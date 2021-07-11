@@ -10,12 +10,12 @@ def interp_et(df):
         df['pml_ET_Ei'] = (df['pml_Ec'] + df['pml_Es'] + df['pml_Ei'])
 
         # interp them
-        df['pml_ET'] = df['pml_ET'].resample('D').mean().interpolate()
-        df['pml_ET_Ei'] = df['pml_ET_Ei'].resample('D').mean().interpolate()
+        df['pml_ET'] = df['pml_ET'].interpolate()
+        df['pml_ET_Ei'] = df['pml_ET_Ei'].interpolate()
 
     if 'modis_ET' in df.columns:
-        df['modis_ET'] = df['modis_ET'].resample('D').mean().interpolate() / 8
-        df['modis_PET'] = df['modis_PET'].resample('D').mean().interpolate() /8
+        df['modis_ET'] = df['modis_ET'].interpolate() / 8
+        df['modis_PET'] = df['modis_PET'].interpolate() /8
 
 
     return df

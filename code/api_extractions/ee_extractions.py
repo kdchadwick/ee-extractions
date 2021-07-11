@@ -1,4 +1,5 @@
 
+# type sh run_extractions.sh to run
 import ee
 import datetime
 import pandas as pd
@@ -15,9 +16,6 @@ import subprocess
 
  #Personal functions
 from extraction_export import extraction_export
-from get_data_df import get_data_df
-from getFlow import getFlow
-from getFlow import getBasin
 from getGeometry import getGeometry
 
 ee.Initialize()

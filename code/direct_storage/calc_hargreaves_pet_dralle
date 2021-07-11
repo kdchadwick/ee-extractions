@@ -1,0 +1,8 @@
+import requests
+
+url = 'https://raw.githubusercontent.com/daviddralle/daviddralle.github.io/master/teaching_data/evaplib.py'
+r = requests.get(url, allow_redirects=True)
+open('evaplib.py', 'wb').write(r.content)
+url = 'https://raw.githubusercontent.com/daviddralle/daviddralle.github.io/master/teaching_data/meteolib.py'
+r = requests.get(url, allow_redirects=True)
+open('meteolib.py', 'wb').write(r.content)

@@ -55,6 +55,7 @@ def intercept_rain(ppt, interception_depth):
 
 
 def recessionAnalysis(recession, basin_name, rainfall_lag = 1.0, mean_fraction = 0.001, interception = False):
+  ##recession = recession.set_index(pd.to_datetime('id'))
   # Set up necessary constants (like dt, lag, and meanQ)
   num_secs = 86400 # seconds in a day
   dt = 1.0 # days
@@ -143,7 +144,7 @@ def recessionAnalysis(recession, basin_name, rainfall_lag = 1.0, mean_fraction =
   plt.tight_layout()
   # plt.savefig('./figures/dqdt_vs_q_clearcreek.pdf')
 
-  (print('Number of bins/data: {}'.format(len(qs))))
+  (print('\nRecession analysis complete. Number of bins/data = {}'.format(len(qs))))
     
   return years, recession, p, dt
 
@@ -208,7 +209,6 @@ def storage(years, recession, p, dt):
   #storage_df['years'] = years[:,-1]
   storage_df['direct'] = annualmax_direct
   storage_df['indirect'] = annualmax_indirect
-  print('Storages calculated and added to df.')
   #print(storage_df)
 
   #### STATISTICS TO PRINT ####
@@ -219,7 +219,7 @@ def storage(years, recession, p, dt):
   dsmean = recession.direct_storage.loc[idx].mean()
   dsstd = np.std(recession.direct_storage.loc[idx])
   dscv = dsstd/dsmean
-  printstr = 'All winter months: indirect storage mean = %.2f pm %.2f, cv = %.2f; direct mean = %.2f, cv = %.2f'%(ismean, isstd, iscv, dsmean, dscv)
+  printstr = '\nAll winter months: indirect storage mean = %.2f pm %.2f, cv = %.2f; direct mean = %.2f, cv = %.2f'%(ismean, isstd, iscv, dsmean, dscv)
   print(printstr)
   
   return recession, annualmax_indirect, annualmax_direct, maxyears
