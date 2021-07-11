@@ -53,6 +53,9 @@ def main():
   parser.add_argument('-et_name', default = 'hargreaves_pet', type=str) #need to come back to this one
   parser.add_argument('-gage', default=np.nan, type=int) #should this be -gage or just gage?
   parser.add_argument('-basin_name', default = "", type=str)
+  parser.add_argument('-disturbance_date', default="NaN", type=str)
+
+
 
 
   print('\n \ndirect_storage.py is parsing and cleaning arguments')
@@ -85,27 +88,82 @@ def main():
   df = df.set_index(pd.to_datetime(df['id']))
   df.to_csv(os.path.join(args.output_directory, 'exports', 'df_withPET.csv'), mode='a', header=True)
 
-  recession = df[['prism_ppt','q_mm', args.et_name]].rename(columns = {"prism_ppt":"ppt", "q_mm":"q", str(args.et_name):"et"}).dropna()
-  print('\n \nDataframe ready. Beginning recession analysis.')
+  #### SPLIT DATAFRAME INTO PRE AND POST DISTURBANCE ####
+  if args.disturbance_date == "NaN":
+    
+    recession = df[['prism_ppt','q_mm', args.et_name]].rename(columns = {"prism_ppt":"ppt", "q_mm":"q", str(args.et_name):"et"}).dropna()
+    print('\n \nDataframe ready. Beginning recession analysis.')
+    
+    # Recession analysis
+    years, recession, p, dt = recessionAnalysis(recession, args.basin_name)
 
-  # Recession analysis
-  years, recession, p, dt = recessionAnalysis(recession, args.basin_name)
+    # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
+    recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
+    recession.to_csv(os.path.join(args.output_directory, 'exports', 'timeseries_withstorage.csv'), mode='a', header=True)
+    
+    #### PLOTS ####
+    # Single water year timeseries
+    start_date = '10-2015'
+    end_date = '4-2016'
+    f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
+    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + '_timeseries_' + start_date + '_' + end_date + '.pdf'))
 
-  # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
-  recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
-  recession.to_csv(os.path.join(args.output_directory, 'exports', 'timeseries_withstorage.csv'), mode='a', header=True)
+    # Bar plots of indirect and direct storage
+    f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
+    f.savefig(os.path.join(args.output_directory, 'figs', 'barplot.pdf'))
+    print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
   
-  #### PLOTS ####
-  
-  # Single water year timeseries
-  start_date = '10-2015'
-  end_date = '4-2016'
-  f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
-  f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + '_timeseries_' + start_date + '_' + end_date + '.pdf'))
+  else:
+    print('\n \n PRE DISTURBANCE')
+    pre = df[df.index < pd.to_datetime(args.disturbance_date)]
+    
+    recession = pre[['prism_ppt','q_mm', args.et_name]].rename(columns = {"prism_ppt":"ppt", "q_mm":"q", str(args.et_name):"et"}).dropna()
+    print('\n \nDataframe ready. Beginning recession analysis.')
+    
+    # Recession analysis
+    years, recession, p, dt = recessionAnalysis(recession, args.basin_name)
 
-  # Bar plots of indirect and direct storage
-  f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
-  f.savefig(os.path.join(args.output_directory, 'figs', 'barplot.pdf'))
-  print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
+    # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
+    recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
+    recession.to_csv(os.path.join(args.output_directory, 'exports', 'pre_disturbance_timeseries_withstorage.csv'), mode='a', header=True)
+    
+    #### PLOTS ####
+    # Single water year timeseries
+    start_date = '10-2015'
+    end_date = '4-2016'
+    f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
+    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + 'pre_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
+
+    # Bar plots of indirect and direct storage
+    f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
+    f.savefig(os.path.join(args.output_directory, 'figs', 'pre_disturbance_barplot.pdf'))
+    print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
+  
+    print('\n \n POST DISTURBANCE')
+    post = df[df.index >= pd.to_datetime(args.disturbance_date)]
+    recession = post[['prism_ppt','q_mm', args.et_name]].rename(columns = {"prism_ppt":"ppt", "q_mm":"q", str(args.et_name):"et"}).dropna()
+    print('\n \nDataframe ready. Beginning recession analysis.')
+    
+    # Recession analysis
+    years, recession, p, dt = recessionAnalysis(recession, args.basin_name)
+
+    # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
+    recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
+    recession.to_csv(os.path.join(args.output_directory, 'exports', 'post_disturbance_timeseries_withstorage.csv'), mode='a', header=True)
+    
+    #### PLOTS ####
+    # Single water year timeseries
+    start_date = '10-2019'
+    end_date = '4-2020'
+    f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
+    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + 'post_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
+
+    # Bar plots of indirect and direct storage
+    f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
+    f.savefig(os.path.join(args.output_directory, 'figs', 'post_disturbance_barplot.pdf'))
+    print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
+  
+
+
 if __name__ == "__main__":
   main()
