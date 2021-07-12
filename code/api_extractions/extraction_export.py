@@ -1,5 +1,5 @@
 from get_data_df import get_data_df
-from getFlow import getFlow
+from getFlow import usgs_discharge
 import pandas as pd
 import ee
 import os
@@ -41,9 +41,9 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
       
 
     all_points = all_points.append(temp_point)
-    flow = getFlow(gage)
+    flow = usgs_discharge(gage)
     all_points = pd.merge(all_points, flow, how = 'outer', on = ['id'], sort = True)
-    all_points.to_csv(os.path.join(outputfile, 'point_extractions_w_merge_on_date.csv'), mode='a', header=True)
+    all_points.to_csv(os.path.join(outputfile, 'extractions_w_merge_on_date.csv'), mode='a', header=True)
 
   else:
     start_min = assets['beginning_year'].min()

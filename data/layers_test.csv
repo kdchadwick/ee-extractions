@@ -1,2 +1,2 @@
 ﻿name,gee_path,date_format,scale,beginning_year,end_year
-pml,CAS/IGSNRR/PML/V2,%Y-%m-%d,500,2003,2004
+prism,OREGONSTATE/PRISM/AN81d,%Y%m%d,500,2000,2020
