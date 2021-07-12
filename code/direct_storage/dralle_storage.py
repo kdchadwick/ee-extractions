@@ -146,7 +146,7 @@ def recessionAnalysis(recession, basin_name, rainfall_lag = 1.0, mean_fraction =
 
   (print('\nRecession analysis complete. Number of bins/data = {}'.format(len(qs))))
     
-  return years, recession, p, dt
+  return years, recession, p, dt, f
 
 def storage(years, recession, p, dt):
   recession['direct_storage'] = 0
