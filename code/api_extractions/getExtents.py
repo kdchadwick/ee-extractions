@@ -37,6 +37,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         # Importing flow line geometry 
         flowlines=gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
         print('\n USGS Basin imported at ' + site_name + 'CRS: ' + str(sites.crs))
+        sites.to_file("exports/sites_USGS_"+str(gage)+".geojson", driver="GeoJSON")
 
     elif type=='points':
         #import points and transform into geopandas
@@ -48,13 +49,12 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         # import polygon
         sites = shape
         sites = sites.to_crs('epsg:4326')
+        sites.to_file("exports/polygon_site.geojson", driver="GeoJSON")
 
     else:
         print('only types USGS_basin, points, and polygon are supported')
         sys.exit()
     
-    #Outputting site as .geojson
-    sites.to_file("exports/sites_"+str(gage)+".geojson", driver="GeoJSON")
     # getting bounding box with 0.05 degree buffer around basin shape
     bbox_gdf = gpd.GeoDataFrame([1], geometry=[box(*sites.buffer(0.05).total_bounds)], crs=sites.crs)
     
@@ -72,16 +72,18 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
     #returning bounding box geometry as geopandas dataframe or ee feature collection
     if output_type=='gpd': return sites, bbox_gdf
     elif output_type=='ee': 
+        # Erica, haaalp! 
         # if want outputs as ee feature collections - this section will run
         bbox_coords = [item for item in bbox_gdf.geometry[0].exterior.coords]
         bbox_fc = ee.Feature(ee.Geometry.Polygon(bbox_coords))
-
+        # creating a gee feature from points
         if type=='points': 
             coordinates = points[['Long', 'Lat']].values.tolist()
             sites_fc = []
             for i in range(len(coordinates)):
                 temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]))
                 sites_fc.append(temp)
+        # creating a gee feature from a polygon (basin or other shape)
         else: 
             sites_coords = [item for item in sites.geometry[0].coords]
             sites_fc = ee.Feature(ee.Geometry.Polygon(sites_coords))
