@@ -11,19 +11,20 @@ def getGeometry(watershed, gage = np.nan, point_csv = np.nan):
     print('\n \nRunning getGeometry.py')
     if watershed == True:
         print('From USGS API: Getting watershed geometry and bounding box')
-        basin, pts, lat, lon = getBasin(gage)
-
+        bounding_box = getBasin(gage)
+        print(bounding_box.geometry)
+        ee.Geometry.Polygon(bounding_box.geometry)
         # Setup edges for bounding box   
-        min_long = math.floor(lon) + 1
-        max_long = math.floor(lon) - 1
-        min_lat = math.floor(lat) - 1
-        max_lat = math.floor(lat) + 1
+        # min_long = math.floor(lon) + 1
+        # max_long = math.floor(lon) - 1
+        # min_lat = math.floor(lat) - 1
+        # max_lat = math.floor(lat) + 1
 
-        bounding_box = ee.Geometry.Polygon(
-                [[[min_long, max_lat],
-                [min_long, min_lat],
-                [max_long, min_lat],
-                [max_long,max_lat]]])
+        # bounding_box = ee.Geometry.Polygon(
+        #         [[[min_long, max_lat],
+        #         [min_long, min_lat],
+        #         [max_long, min_lat],
+        #         [max_long,max_lat]]])
 
         names = []
         
