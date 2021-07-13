@@ -20,9 +20,9 @@ def main():
 
     locs= pd.read_csv('data/coordinates.csv')
 
-    getLocation(type='USGS_basin', output_type='gpd', gage=11465350)
+    #getLocation(type='USGS_basin', output_type='gpd', gage=11465350)
     #getLocation(type='points', output_type='ee', points = locs, gage='points')
-    #getLocation(type='polygon', output_type='ee', shape=ca, gage='ca')
+    getLocation(type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
 
 
 def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plot_map=True):
@@ -41,6 +41,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
 
     elif type=='points':
         #import points and transform into geopandas
+        print('points are being read as geolocations in epsg: 4326')
         sites = gpd.GeoDataFrame(points, geometry=gpd.points_from_xy(points.Long, points.Lat))
         sites = sites.set_crs('epsg:4326')
         sites.to_file('exports/points.geojson', driver="GeoJSON")
@@ -72,7 +73,6 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
     #returning bounding box geometry as geopandas dataframe or ee feature collection
     if output_type=='gpd': return sites, bbox_gdf
     elif output_type=='ee': 
-        # Erica, haaalp! 
         # if want outputs as ee feature collections - this section will run
         bbox_coords = [item for item in bbox_gdf.geometry[0].exterior.coords]
         bbox_fc = ee.Feature(ee.Geometry.Polygon(bbox_coords))
@@ -83,14 +83,19 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
             for i in range(len(coordinates)):
                 temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]))
                 sites_fc.append(temp)
-        # creating a gee feature from a polygon (basin or other shape)
         else: 
-            sites_coords = [item for item in sites.geometry[0].coords]
-            sites_fc = ee.Feature(ee.Geometry.Polygon(sites_coords))
-    
-return sites_fc, bbox_fc
+            # This allows for multipart polygons i.e. california
+            sites = sites.explode()
+            sites_fc = []
+            for i in sites.geometry:
+                poly_coords = list(i.exterior.coords)
+                temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
+                sites_fc.append(temp)
+
+        return sites_fc, bbox_fc
     else: print('not a valid output type, select gpd or ee')
 
 
 if __name__ == "__main__":
     main()
+    
