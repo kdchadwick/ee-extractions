@@ -74,18 +74,3 @@ def bar_indirect(annualmax_indirect, maxyears, basin_name):
   return f
   #plt.savefig('figs/' + basin_name + '_maxes.pdf')
 
-def plot_dv(df, args.disturbance_date):
-  winter_months = [11, 12, 1, 2, 3]
-  df = df[df.index.map(lambda t: t.month in winter_months)]
-  df['wateryear'] = np.where(~df.index.month.isin([10,11,12]),df.index.year,df.index.year+1)
-  df['disturbance'] = np.where(df.index < args.disturbance_date, 'pre_disturbance', 'post_disturbance')
-  f = plt.figure(figsize=(6.5,4))
-  sns.scatterplot(x = df['prism_ppt'], y = (df['prism_ppt']-df['q_mm'], hue = df['wateryear'], style = df['disturbance'])
-                  
-  return f
-  
-def plot_wshd_activation():
-  elderdv = (precip_2017['precip'].cumsum()-
-         elder_q_2017['runoff'].cumsum() - 
-         elder_pet_2017['pet'].cumsum()
-         )

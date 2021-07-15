@@ -139,7 +139,7 @@ def main():
     # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
     recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
     pre_data_path = os.path.join(args.output_directory, 'exports', 'pre_disturbance_timeseries_withstorage.csv')
-    recession.to_csv(pre_data_path), mode='a', header=True)
+    recession.to_csv(pre_data_path, mode='a', header=True)
     
     # Single water year timeseries
     start_date = '10-' + str(args.plot_year)
@@ -174,10 +174,9 @@ def main():
     f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + 'post_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
 
     # Bar plots of indirect and direct storage
-    f = bar_indirect(df)
+    f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
     f.savefig(os.path.join(args.output_directory, 'figs', 'post_disturbance_barplot.pdf'))
     print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
-  
 
 
 if __name__ == "__main__":
