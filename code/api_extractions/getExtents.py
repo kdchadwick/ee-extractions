@@ -15,13 +15,17 @@ import sys
 ee.Initialize()
 
 def main():
-
+    # states = ee.FeatureCollection("TIGER/2016/States").getInfo()
+    # df = pd.json_normalize(states['features'])
+    # print(df.columns)
+    # # df = df[df.columns[df.columns.str.contains('id')].append(df.columns[df.columns.str.contains('properties')])]
+    # print(df.columns)
     ca = gpd.read_file('data/ca-state-boundary/CA_State_TIGER2016.shp')
 
     locs= pd.read_csv('data/coordinates.csv')
 
-    #getLocation(type='USGS_basin', output_type='gpd', gage=11465350)
-    #getLocation(type='points', output_type='ee', points = locs, gage='points')
+    getLocation(type='USGS_basin', output_type='gpd', gage=11465350)
+    getLocation(type='points', output_type='ee', points = locs, gage='points')
     getLocation(type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
 
 
@@ -79,23 +83,27 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         # creating a gee feature from points
         if type=='points': 
             coordinates = points[['Long', 'Lat']].values.tolist()
-            sites_fc = []
+            sites_fl = []
             for i in range(len(coordinates)):
-                temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]))
-                sites_fc.append(temp)
+                temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]), {'Name': points['Site Name'][i]})
+                sites_fl.append(temp)
+            sites_fc = ee.FeatureCollection(sites_fl)
         else: 
-            # This allows for multipart polygons i.e. california
+            # This allows for multipart polygons i.e. california, 
+            # but they currnetly behave as their own features, 
+            # which is not right... This needs fixing. 
+            print(sites['NAME'])
             sites = sites.explode()
-            sites_fc = []
+            sites_f = []
             for i in sites.geometry:
                 poly_coords = list(i.exterior.coords)
                 temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
-                sites_fc.append(temp)
-
+                sites_f.append(temp)
+            sites_fc=ee.FeatureCollection(sites_f)
+            sites_fc.set('Name','CA')
         return sites_fc, bbox_fc
     else: print('not a valid output type, select gpd or ee')
 
 
 if __name__ == "__main__":
     main()
-    
