@@ -36,8 +36,12 @@ def main():
   if args.wshd.lower() == 'true':
       args.wshd = True
       type = 'USGS_basin' #for getLocation
+      print('\nSite is USGS watershed for gage ', args.gage)
   else:
       type = 'points'
+      site_to_print = pd.read_csv(args.point_csv)
+      print('Sites to extract data at:')
+      print(site_to_print)
 
   if args.wshd == True & math.isnan(args.gage):
     print('WARNING: No USGS gage is specified for watershed extraction. \nExiting... \n \n \n')
@@ -59,6 +63,7 @@ def main():
   assets['scale'] = assets['scale'].astype('float')
   print('Assets to be extracted: \n ')
   print(assets.head())
+  
   
   print('\n \nSaving inputs and args to settings folder in {}'.format(args.output_directory))
   with open(os.path.join(args.output_directory, 'ee_extractions', 'settings', 'input_args.txt'), 'w') as f:
