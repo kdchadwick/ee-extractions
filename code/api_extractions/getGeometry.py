@@ -1,28 +1,29 @@
- 
 import ee
 import pandas as pd
 import math
-from usgs_basin_geometry import usgs_basin_geometry
- 
+import numpy as np
+from getLocation import getLocation 
 
-def getGeometry(watershed, gage = 11134800, point_csv = 'data/coordinates.csv'):
+def getGeometry(watershed, gage = np.nan, point_csv = np.nan):
 
     print('\n \nRunning getGeometry.py')
-    if watershed == True:
+    if type=='USGS_basin':
         print('From USGS API: Getting watershed geometry and bounding box')
-        basin, pts, lat, lon = usgs_basin_geometry(gage)
-
+        bounding_box = getLocation(gage)
+        sites_fc, bbox_fc =  getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plot_map=True):
+        print(bounding_box.geometry)
+        ee.Geometry.Polygon(bounding_box.geometry)
         # Setup edges for bounding box   
-        min_long = math.floor(lon) + 1
-        max_long = math.floor(lon) - 1
-        min_lat = math.floor(lat) - 1
-        max_lat = math.floor(lat) + 1
+        # min_long = math.floor(lon) + 1
+        # max_long = math.floor(lon) - 1
+        # min_lat = math.floor(lat) - 1
+        # max_lat = math.floor(lat) + 1
 
-        bounding_box = ee.Geometry.Polygon(
-                [[[min_long, max_lat],
-                [min_long, min_lat],
-                [max_long, min_lat],
-                [max_long,max_lat]]])
+        # bounding_box = ee.Geometry.Polygon(
+        #         [[[min_long, max_lat],
+        #         [min_long, min_lat],
+        #         [max_long, min_lat],
+        #         [max_long,max_lat]]])
 
         names = []
         

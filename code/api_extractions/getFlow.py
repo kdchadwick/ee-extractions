@@ -1,11 +1,21 @@
-import geopandas as gp
+import geopandas as gpd
 import pandas as pd
+import numpy as np
 import datetime
+import matplotlib.pyplot as plt
+from shapely.geometry import Polygon
+from shapely.geometry import box
+import contextily as ctx
+import urllib
+import os
+import json
 import ee
+import sys
+
 ee.Initialize()
 
-def usgs_discharge(gage, start = '1988-01-01', stop = '2020-01-01'):
-    #print('\n running getFlow function from getFlow.py')
+def getFlow(gage, start = '1988-01-01', stop = '2020-01-01'):
+    print('\n running getFlow function from getFlow.py')
     site = str(gage)
     basin = gp.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)
 
@@ -27,3 +37,15 @@ def usgs_discharge(gage, start = '1988-01-01', stop = '2020-01-01'):
     df.set_index('id',inplace=True) 
 
     return df
+
+    #bbox = bounds.total_bounds
+
+    # coords = [item for item in basin.geometry[0].exterior.coords]
+    # gee_feat = ee.Feature(ee.Geometry.Polygon(coords))
+    # gee_feat = gee_feat.set('Site',1)
+    # fts_list = [gee_feat]
+    # fts = ee.FeatureCollection(fts_list)
+    # print(fts)
+
+    # site_lat = basin.to_crs('epsg:4326').geometry[0].centroid.y
+    # site_long = basin.to_crs('epsg:4326').geometry[0].centroid.x
