@@ -1,4 +1,4 @@
-import geopandas as gpd
+import geopandas as gp
 import pandas as pd
 import numpy as np
 import datetime
