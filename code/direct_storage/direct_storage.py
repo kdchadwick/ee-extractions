@@ -79,24 +79,23 @@ def main():
       if os.path.isdir(args.output_directory) == False:
         print('\nWARNING: User specified directory exists, but it does not. \nExiting...\n \n \n')
         sys.exit()
-      if os.path.isdir(args.output_directory + '/settings') == False:
-        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'settings'), shell=True)
-      if os.path.isdir(args.output_directory + '/exports') == False:
-        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'exports'), shell=True)
-      if os.path.isdir(args.output_directory + '/figs') == False:
-        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'figs'), shell=True)
+      else:
+        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'direct_storage'), shell=True)
+        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'direct_storage', 'settings'), shell=True)
+        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'direct_storage','exports'), shell=True)
+        subprocess.call('mkdir ' + os.path.join(args.output_directory, 'direct_storage','figs'), shell=True)
   
   print('\nSaving inputs and args to settings folder in {}'.format(args.output_directory))
-  with open(os.path.join(args.output_directory, 'settings', 'input_args.txt'), 'w') as f:
+  with open(os.path.join(args.output_directory, 'direct_storage','settings', 'input_args.txt'), 'w') as f:
     json.dump(args.__dict__, f, indent=2)
 
   # save original dataframe
   df = pd.read_csv(args.timeseries_csv)
-  df.to_csv(os.path.join(args.output_directory, 'settings', 'original_timeseries.csv'), mode='a', header=True)
+  df.to_csv(os.path.join(args.output_directory, 'direct_storage','settings', 'original_timeseries.csv'), mode='a', header=True)
   # calculate hargreaves pet
   df = pet_hargreaves(args.gage, df)
   df = df.set_index(pd.to_datetime(df['id']))
-  pet_path = os.path.join(args.output_directory, 'exports', 'df_withPET.csv')
+  pet_path = os.path.join(args.output_directory, 'direct_storage','exports', 'df_withPET.csv')
   df.to_csv(pet_path, mode='a', header=True)
 
   ############################ NO DISTURBANCE ############################
@@ -107,21 +106,21 @@ def main():
     
     # Recession analysis
     years, recession, p, dt, f = recessionAnalysis(recession, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'recession_plot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'recession_plot.pdf'))
 
     # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
     recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
-    recession.to_csv(os.path.join(args.output_directory, 'exports', 'timeseries_withstorage.csv'), mode='a', header=True)
+    recession.to_csv(os.path.join(args.output_directory, 'direct_storage','exports', 'timeseries_withstorage.csv'), mode='a', header=True)
     
     # Single water year timeseries
     start_date = '10-' + str(args.plot_year)
     end_date = '4-' + str(args.plot_year + 1)
     f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
-    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + '_timeseries_' + start_date + '_' + end_date + '.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', args.basin_name + '_timeseries_' + start_date + '_' + end_date + '.pdf'))
 
     # Bar plots of indirect and direct storage
     f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'barplot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'barplot.pdf'))
     print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
   
   ############################ PRE DISTURBANCE ANALYSIS ############################
@@ -134,22 +133,22 @@ def main():
     
     # Recession analysis
     years, recession, p, dt, f = recessionAnalysis(recession, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'pre_disturbance_recession_plot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'pre_disturbance_recession_plot.pdf'))
     
     # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
     recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
-    pre_data_path = os.path.join(args.output_directory, 'exports', 'pre_disturbance_timeseries_withstorage.csv')
+    pre_data_path = os.path.join(args.output_directory, 'direct_storage','exports', 'pre_disturbance_timeseries_withstorage.csv')
     recession.to_csv(pre_data_path, mode='a', header=True)
     
     # Single water year timeseries
     start_date = '10-' + str(args.plot_year)
     end_date = '4-' + str(args.plot_year + 1)
     f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
-    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + 'pre_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', args.basin_name + 'pre_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
 
     # Bar plots of indirect and direct storage
     f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'pre_disturbance_barplot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'pre_disturbance_barplot.pdf'))
     print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
   
     ############################ POST DISTURBANCE ANSLYSIS ############################
@@ -160,22 +159,22 @@ def main():
     
     # Recession analysis
     years, recession, p, dt, f = recessionAnalysis(recession, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'post_disturbance_recession_plot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'post_disturbance_recession_plot.pdf'))
 
     # Calculate indirect and direct storage using results from recession analysis, update 'recession' df
     recession, annualmax_indirect, annualmax_direct, maxyears = storage(years, recession, p, dt)
-    post_data_path = os.path.join(args.output_directory, 'exports', 'post_disturbance_timeseries_withstorage.csv')
+    post_data_path = os.path.join(args.output_directory, 'direct_storage','exports', 'post_disturbance_timeseries_withstorage.csv')
     recession.to_csv(post_data_path, mode='a', header=True)
     
     # Single water year timeseries
     start_date = '10-' + str(args.plot_year_postdisturb)
     end_date = '4-' + str(args.plot_year_postdisturb + 1)
     f = plot_all_timeseries(recession, dt, args.basin_name, start_date, end_date)
-    f.savefig(os.path.join(args.output_directory, 'figs', args.basin_name + 'post_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', args.basin_name + 'post_disturbance_timeseries_' + start_date + '_' + end_date + '.pdf'))
 
     # Bar plots of indirect and direct storage
     f = bar_indirect(annualmax_indirect, maxyears, args.basin_name)
-    f.savefig(os.path.join(args.output_directory, 'figs', 'post_disturbance_barplot.pdf'))
+    f.savefig(os.path.join(args.output_directory, 'direct_storage','figs', 'post_disturbance_barplot.pdf'))
     print('\n \nAnalysis complete. Plots and dataframe saved to figs and exports folders.\n')
 
 

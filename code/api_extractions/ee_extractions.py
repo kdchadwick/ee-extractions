@@ -64,8 +64,10 @@ def main():
   with open(os.path.join(args.output_directory, 'ee_extractions', 'settings', 'input_args.txt'), 'w') as f:
     json.dump(args.__dict__, f, indent=2)
   assets.to_csv(os.path.join(args.output_directory, 'ee_extractions', 'settings', 'assets.csv'))
-  subprocess.call('cp ' + os.path.join(args.point_csv) + ' ' + os.path.join(args.output_directory, 'ee_extractions', 'settings', 'export_coords.csv'), shell=True)
-  
+  ### DANA - this is giving me an error when I try to run direct/indirect storage ###
+  #subprocess.call('cp ' + os.path.join(args.point_csv) + ' ' + os.path.join(args.output_directory, 'ee_extractions', 'settings', 'export_coords.csv'), shell=True)
+  subprocess.call('cp ' + os.path.join(args.output_directory, 'ee_extractions', 'settings', 'export_coords.csv'), shell=True)
+
   #pts, bounding_box, names = getGeometry(args.wshd, args.gage, args.point_csv)
   sites_fc, bbox_fc, site_name = getLocation(type = type, output_type = 'ee', gage = args.gage, points = args.point_csv, plot_map=True, output_directory = args.output_directory, sub_directory = '/ee_extractions')
   extraction_export(assets, sites_fc, bbox_fc, site_name, args.output_directory, args.wshd, args.gage)
