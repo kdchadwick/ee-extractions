@@ -1,5 +1,4 @@
 # shell code for: 
-#Diret/Indirect Storage 
 
 python3 code/api_extractions/ee_extractions.py data/layers_test.csv putah_dir_test -wshd True -gage 11453500
 

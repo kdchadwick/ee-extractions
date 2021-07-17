@@ -84,18 +84,21 @@ def main():
     # Interpolate Data & get ET columns for MODIS and PML
     df = process_timeseries(data, interp = 'True')
     df.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'post_processed_timeseries.csv'), mode='a', header=True)
-    print('\nTimeseries post-processing complete; deficits ready to be calculated.')
+    print('\nTimeseries post-processing complete. Deficit being calculated...')
     
     # Calculate deficit
     #df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
     df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
-    print('\nDeficits calculated.')
+    print('\nCalculation complete.')
     
     # Plotting
-    fig = plot.multi_site_plotting_fig(df_pml, start_year = 2003, end_year = 2017)
-    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'multi_site_plotting_fig.png'))
+    print('Saving figures to {}'.format(args.output_directory))
+    fig = plot.simple_multi_site_fig(df_pml)
+    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'simple_multisite.png'))
 
-    
+    fig = plot.facet_multi_site_fig(df_pml)
+    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_multisite.png'))
+
     
     '''
     ################## ORIGINAL VERSION ##################

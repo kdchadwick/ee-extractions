@@ -1,6 +1,99 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib
+from matplotlib import gridspec
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+#matplotlib.rcParams['pdf.fonttype'] = 42
+#matplotlib.rcParams['ps.fonttype'] = 42
+
+################## ERICA PLOTS ##################
+
+def simple_multi_site_fig(data):
+    site_names = data['point'].unique()
+    num_of_sites = len(site_names)
+    fig, ax = plt.subplots(nrows=4,ncols=3, sharex = True, figsize = (20,20), dpi = 300)
+    ax = ax.flatten()
+    for i in range(num_of_sites):
+        plot_data = data[data['point'] == site_names[i]]
+        ax[i].plot(plot_data['id'], plot_data['D_new'], '-', color='#ED9935')#, label='MODIS 10x10')
+        ax[i].set_ylabel('Deficit (mm)')
+        ax[i].set_title(site_names[i])
+       # ax[i].xticks(rotation = 'vertical')
+    ax[2].legend()
+    #ax[i].set_ylim(0,1000)
+    return fig
+
+
+def facet_multi_site_fig(data, ppt = 'prism_ppt', et_1 = 'pml_ET'):
+    site_names = data['point'].unique()
+    num_of_sites = len(site_names)
+    fig, ax = plt.subplots(nrows=4,ncols=3, sharex = True, figsize = (20,20), dpi = 300)
+    ax = ax.flatten()
+
+    for i in range(num_of_sites):
+        
+        gs = gridspec.GridSpec(4, 3) #these need to match subplots above
+
+        ax[i] = plt.subplot(gs[i])
+        axMain = ax[i]
+        plt.sca(axMain) #sca = set current axes
+
+        #all the axes
+        divider = make_axes_locatable(axMain)
+        axShallow = divider.append_axes("top", size="50%", pad=0.1, sharex=axMain) #middle, needs to have cf = in front
+        axShallow2 = divider.append_axes("top", size="80%", pad=0.1, sharex=axMain) #top
+        #axMain is the bottom
+
+        # DEFICITS
+        plot_data = data[data['point'] == site_names[i]]
+        axMain.plot(plot_data['id'], plot_data['D_new'], '-',color='#ED9935', label='PML')
+        
+        #plot_data = data[data['point'] == site_names[i]]
+        #axMain.plot(plot_data['id'], plot_data['D_new'], '--', color='#612fa3', label='MODIS')
+        #plot_data = pml_prism[pml_prism['point'] == site_names[i]]
+        #axMain.plot(plot_data['id'], plot_data['D_new'], '-',color='#ED9935', label='PML')
+        #plot_data = modis_prism[modis_prism['point'] == site_names[i]]
+        #axMain.plot(plot_data['id'], plot_data['D_new'], '-', color='#612fa3', label='MODIS')
+
+
+        # CUMULATIVE ET & PRECIP
+        plot_data = data[data['point'] == site_names[i]]
+        axShallow2.fill_between(plot_data.index, 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
+
+        #plot_data = data[data['point'] == site_names[i]]
+        #axShallow2.plot(plot_data.index, plot_data['prism'],'--', color='blue', alpha = 0.75, label='10x10 Precipitation (mm)')
+
+        plot_data = data[data['point'] == site_names[i]]
+        #axShallow.fill_between(plot_data.index, 0, plot_data['pml'],color='grey', label='PML', alpha = 0.1)
+        cf = axShallow.plot(plot_data.index, plot_data[et_1],'-',color='#ED9935', alpha = 0.8)
+
+        #plot_data = data[data['point'] == site_names[i]]
+        #axShallow.fill_between(plot_data.index, 0, plot_data['modis'],color='#612fa3', label='PML (mm)', alpha = 0.1)
+        #axShallow.plot(plot_data.index, plot_data['modis'],'-',color='#612fa3', alpha = 0.8)
+
+        #plot_data = data[data['point'] == site_names[i]]
+        #axShallow.fill_between(plot_data.index, 0, plot_data['pml'],color='grey', label='PML', alpha = 0.1)
+        #cf = axShallow.plot(plot_data.index, plot_data['pml'],'--',color='#ED9935', alpha = 0.8)
+
+        #plot_data = data[data['point'] == site_names[i]]
+        #axShallow.fill_between(plot_data.index, 0, plot_data['modis'],color='#612fa3', label='PML (mm)', alpha = 0.1)
+        #axShallow.plot(plot_data.index, plot_data['modis'],'--',color='#612fa3', alpha = 0.8)
+
+
+        # Set labels
+        axShallow.set_xticklabels([])
+        #axShallow2.set_xticklabels([])
+
+        axShallow2.set_title(site_names[i])
+
+    return fig
+
+
+################## DANA PLOTS ##################
+
 
 def multi_site_plotting_fig(data, start_year = 2003, end_year = 2017):
     
