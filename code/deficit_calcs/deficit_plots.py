@@ -27,7 +27,7 @@ def simple_multi_site_fig(data):
     return fig
 
 
-def facet_multi_site_fig(data, ppt = 'prism_ppt', et_1 = 'pml_ET'):
+def facet_cum_multisite_fig(data, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET'):
     site_names = data['point'].unique()
     num_of_sites = len(site_names)
     fig, ax = plt.subplots(nrows=4,ncols=3, sharex = True, figsize = (20,20), dpi = 300)
@@ -61,14 +61,14 @@ def facet_multi_site_fig(data, ppt = 'prism_ppt', et_1 = 'pml_ET'):
 
         # CUMULATIVE ET & PRECIP
         plot_data = data[data['point'] == site_names[i]]
-        axShallow2.fill_between(plot_data.index, 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
+        axShallow2.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
 
         #plot_data = data[data['point'] == site_names[i]]
         #axShallow2.plot(plot_data.index, plot_data['prism'],'--', color='blue', alpha = 0.75, label='10x10 Precipitation (mm)')
 
         plot_data = data[data['point'] == site_names[i]]
         #axShallow.fill_between(plot_data.index, 0, plot_data['pml'],color='grey', label='PML', alpha = 0.1)
-        cf = axShallow.plot(plot_data.index, plot_data[et_1],'-',color='#ED9935', alpha = 0.8)
+        cf = axShallow.plot(plot_data['id'], plot_data[et_1],'-',color='#ED9935', alpha = 0.8)
 
         #plot_data = data[data['point'] == site_names[i]]
         #axShallow.fill_between(plot_data.index, 0, plot_data['modis'],color='#612fa3', label='PML (mm)', alpha = 0.1)
@@ -88,6 +88,11 @@ def facet_multi_site_fig(data, ppt = 'prism_ppt', et_1 = 'pml_ET'):
         #axShallow2.set_xticklabels([])
 
         axShallow2.set_title(site_names[i])
+        
+        # Y axis labels
+        axShallow2.set_ylabel('P (mm)')
+        axShallow.set_ylabel('Deficit (mm)')
+        axMain.set_ylabel('ET (mm)')
 
     return fig
 

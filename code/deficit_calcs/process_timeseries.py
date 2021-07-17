@@ -1,5 +1,7 @@
 
-def process_timeseries(data, interp = 'True'):
+from wtryear_cum import wtryear_cum
+
+def process_timeseries(data, interp = 'True', cumulative = True):
     df = data.copy()
     if interp == 'True':
         for i in df['point'].unique():
@@ -17,4 +19,8 @@ def process_timeseries(data, interp = 'True'):
         if 'modis_ET_x8' not in df.columns:
             df['modis_ET_x8'] = df['modis_ET'] / 8
             df['modis_PET_x8'] = df['modis_PET'] / 8
+            
+    if cumulative == True:
+        df = wtryear_cum(df)
+        
     return df
