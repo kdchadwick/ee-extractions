@@ -1,0 +1,7 @@
+{
+  "asset_layers_csv": "data/layers_short_contemporary.csv",
+  "output_directory": "dir_timeseries",
+  "point_csv": "data/coordinates.csv",
+  "wshd": "False",
+  "gage": NaN
+}
