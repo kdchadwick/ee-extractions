@@ -5,6 +5,8 @@ import matplotlib.dates as mdates
 import matplotlib
 from matplotlib import gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+
 
 #matplotlib.rcParams['pdf.fonttype'] = 42
 #matplotlib.rcParams['ps.fonttype'] = 42
@@ -27,7 +29,7 @@ def simple_multi_site_fig(data):
     return fig
 
 
-def facet_cum_multisite_fig(data, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET'):
+def facet_cum_multisite_fig(data, data_modis = None, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET', et_2 = 'modis_ET'):
     site_names = data['point'].unique()
     num_of_sites = len(site_names)
     fig, ax = plt.subplots(nrows=4,ncols=3, sharex = True, figsize = (20,20), dpi = 300)
@@ -43,56 +45,35 @@ def facet_cum_multisite_fig(data, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET'):
 
         #all the axes
         divider = make_axes_locatable(axMain)
-        axShallow = divider.append_axes("top", size="50%", pad=0.1, sharex=axMain) #middle, needs to have cf = in front
-        axShallow2 = divider.append_axes("top", size="80%", pad=0.1, sharex=axMain) #top
+        axShallow = divider.append_axes("top", size="50%", pad=0.3, sharex=axMain) #middle, needs to have cf = in front
+        ##axShallow2 = divider.append_axes("top", size="80%", pad=0.1, sharex=axMain) #top
         #axMain is the bottom
+        
+        plot_data = data[data['point'] == site_names[i]]
 
         # DEFICITS
-        plot_data = data[data['point'] == site_names[i]]
         axMain.plot(plot_data['id'], plot_data['D_new'], '-',color='#ED9935', label='PML')
         
-        #plot_data = data[data['point'] == site_names[i]]
-        #axMain.plot(plot_data['id'], plot_data['D_new'], '--', color='#612fa3', label='MODIS')
-        #plot_data = pml_prism[pml_prism['point'] == site_names[i]]
-        #axMain.plot(plot_data['id'], plot_data['D_new'], '-',color='#ED9935', label='PML')
-        #plot_data = modis_prism[modis_prism['point'] == site_names[i]]
-        #axMain.plot(plot_data['id'], plot_data['D_new'], '-', color='#612fa3', label='MODIS')
-
-
         # CUMULATIVE ET & PRECIP
-        plot_data = data[data['point'] == site_names[i]]
-        axShallow2.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
-
-        #plot_data = data[data['point'] == site_names[i]]
-        #axShallow2.plot(plot_data.index, plot_data['prism'],'--', color='blue', alpha = 0.75, label='10x10 Precipitation (mm)')
-
-        plot_data = data[data['point'] == site_names[i]]
-        #axShallow.fill_between(plot_data.index, 0, plot_data['pml'],color='grey', label='PML', alpha = 0.1)
-        cf = axShallow.plot(plot_data['id'], plot_data[et_1],'-',color='#ED9935', alpha = 0.8)
-
-        #plot_data = data[data['point'] == site_names[i]]
-        #axShallow.fill_between(plot_data.index, 0, plot_data['modis'],color='#612fa3', label='PML (mm)', alpha = 0.1)
-        #axShallow.plot(plot_data.index, plot_data['modis'],'-',color='#612fa3', alpha = 0.8)
-
-        #plot_data = data[data['point'] == site_names[i]]
-        #axShallow.fill_between(plot_data.index, 0, plot_data['pml'],color='grey', label='PML', alpha = 0.1)
-        #cf = axShallow.plot(plot_data.index, plot_data['pml'],'--',color='#ED9935', alpha = 0.8)
-
-        #plot_data = data[data['point'] == site_names[i]]
-        #axShallow.fill_between(plot_data.index, 0, plot_data['modis'],color='#612fa3', label='PML (mm)', alpha = 0.1)
-        #axShallow.plot(plot_data.index, plot_data['modis'],'--',color='#612fa3', alpha = 0.8)
-
+        axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
+        cf = axShallow.plot(plot_data['id'], plot_data[et_1],'--',color='#ED9935', alpha = 0.8)
+ 
+        if data_modis != None:
+            plot_modis = data_modis[data_modis['point'] == site_names[i]]
+            # DEFICIT
+            axMain.plot(plot_modis['id'], plot_modis['D_new'], '-',color='#612fa3', label='MODIS')
+            # CUMULATIVE ET
+            axShallow.plot(data_modis['id'], data_modis[et_2],'--',color='#612fa3', alpha = 0.8)
 
         # Set labels
         axShallow.set_xticklabels([])
         #axShallow2.set_xticklabels([])
 
-        axShallow2.set_title(site_names[i])
+        axShallow.set_title(site_names[i])
         
         # Y axis labels
-        axShallow2.set_ylabel('P (mm)')
-        axShallow.set_ylabel('Deficit (mm)')
-        axMain.set_ylabel('ET (mm)')
+        axShallow.set_ylabel('P and ET (mm)')
+        axMain.set_ylabel('Deficit (mm)')
 
     return fig
 

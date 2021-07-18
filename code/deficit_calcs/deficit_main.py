@@ -31,6 +31,7 @@ def main():
     parser.add_argument('input_timeseries_csv', type=str)
     parser.add_argument('output_directory', type=str)
     parser.add_argument('-new_directory', type=str, default='False')
+    parser.add_argument('-show_modis', type = str, default = 'False')
     parser.add_argument('-interpolate', type=str, default='True')
     parser.add_argument('-xtra_imports', type=str, default='False')
     parser.add_argument('-snow_correction', type=str, default = 'True')
@@ -87,18 +88,23 @@ def main():
     print('\nTimeseries post-processing complete. Deficit being calculated...')
     
     # Calculate deficit
-    #df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
     df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
+    if args.show_modis.lower() == 'true':
+        df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
+
     print('\nCalculation complete.')
     
     # Plotting
     print('Saving figures to {}'.format(args.output_directory))
     fig = plot.simple_multi_site_fig(df_pml)
     fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'simple_multisite.png'))
-
-    fig = plot.facet_cum_multisite_fig(df_pml)
-    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
-
+    
+    if args.show_modis.lower() == 'true':
+        fig = plot.facet_cum_multisite_fig(data = df_pml, data_modis = df_modis)
+        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
+    else:
+        fig = plot.facet_cum_multisite_fig(data = df_pml)
+        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
     
     '''
     ################## ORIGINAL VERSION ##################
