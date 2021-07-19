@@ -19,6 +19,7 @@ def plot_all_timeseries(recession, dt, basin_name, start_date, end_date):
 
   pcumulative = recession['ppt'].loc[start_date:end_date].cumsum()*dt*1000
   qcumulative = recession['q'].loc[start_date:end_date].cumsum()*dt
+  # Erica - I get an error thrown on this line... 
   pcumulative.plot(style=':', lw=1.5)
   labels.append('$\sum P$')
   qcumulative.plot(style='-.', lw=1.5)

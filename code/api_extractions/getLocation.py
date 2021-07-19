@@ -24,14 +24,14 @@ def main():
 
     locs= pd.read_csv('data/coordinates.csv')
 
-    getLocation(type='USGS_basin', output_type='gpd', gage=11465350)
-    getLocation(type='points', output_type='ee', points = locs, gage='points')
-    getLocation(type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
+    getLocation(input_type='USGS_basin', output_type='gpd', gage=11465350)
+    getLocation(input_type='points', output_type='ee', points = locs, gage='points')
+    getLocation(input_type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
 
 
-def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plot_map=True, output_directory = np.nan, sub_directory = np.nan):
+def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plot_map=True, output_directory = np.nan, sub_directory = np.nan):
     
-    if type=='USGS_basin':
+    if input_type=='USGS_basin':
         #Importing basin geometery 
         sites = gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)    
         # defining URL to access json 
@@ -43,7 +43,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         print('\n USGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
         sites.to_file(output_directory + sub_directory + "/exports/sites_USGS_"+str(gage)+".geojson", driver="GeoJSON")
 
-    elif type=='points':
+    elif input_type=='points':
         #import points and transform into geopandas
         print('points are being read as geolocations in epsg: 4326')
         locs = pd.read_csv(str(points))
@@ -53,7 +53,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         sites.to_file(output_directory + sub_directory + '/exports/points.geojson', driver="GeoJSON")
         
     
-    elif type=='polygon':
+    elif input_type=='polygon':
         # import polygon
         sites = shape
         sites = sites.to_crs('epsg:4326')
@@ -69,13 +69,13 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
     
     #plotting basin on basemap
     if plot_map:
-        if type=='points': loc_plot = sites.to_crs(epsg=3857).plot(color='darkgreen', figsize=(8, 8), label='Points')
+        if input_type=='points': loc_plot = sites.to_crs(epsg=3857).plot(color='darkgreen', figsize=(8, 8), label='Points')
         else: loc_plot = sites.to_crs(epsg=3857).boundary.plot(color='darkgreen', figsize=(8, 8), label='Site Area')
-        if type=='USGS_basin': flowlines.to_crs(epsg=3857).plot(ax=loc_plot, label='Flow Lines')
+        if input_type=='USGS_basin': flowlines.to_crs(epsg=3857).plot(ax=loc_plot, label='Flow Lines')
         bbox_gdf.to_crs(epsg=3857).boundary.plot(ax=loc_plot, color='black', label='Bounding Box')
         ctx.add_basemap(ax=loc_plot)
         plt.legend()
-        if type=='USGS_basin': plt.title('USGS Gage at: '+site_name[0])
+        if input_type=='USGS_basin': plt.title('USGS Gage at: '+site_name[0])
         plt.savefig(output_directory + sub_directory +'/figs/extent_'+str(gage)+'.png')
 
     #returning bounding box geometry as geopandas dataframe or ee feature collection
@@ -83,22 +83,21 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
     elif output_type=='ee': 
         # if want outputs as ee feature collections - this section will run
         bbox_coords = [item for item in bbox_gdf.geometry[0].exterior.coords]
-        bbox_fc = ee.Geometry.Polygon(bbox_coords)
+        bbox_geom = ee.Geometry.Polygon(bbox_coords)
         # creating a gee feature from points
-        if type=='points': 
+        if input_type=='points': 
             coordinates = locs[['Long', 'Lat']].values.tolist()
-            sites_fl = []
+            sites_features = []
             # Below gets a feature collection from sites, Erica modified to return a list of features
             for i in range(len(coordinates)):
                 temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]), {'Name': locs['Site Name'][i]})
-                sites_fl.append(temp)
-            sites_fc = sites_fl # Erica modified and commented out next line so as to return a list of features instead of a collection
+                sites_features.append(temp)
+            #sites_fc = sites_fl # Erica modified and commented out next line so as to return a list of features instead of a collection
             #sites_fc = ee.FeatureCollection(sites_fl)
-        elif type == 'USGS_basin':
-           
+        elif input_type == 'USGS_basin':
             poly_coords = [item for item in sites.geometry[0].exterior.coords]
-            temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
-            sites_fc = ee.FeatureCollection([temp])
+            sites_features = ee.Geometry.Polygon(coords=poly_coords)
+            #sites_features = ee.FeatureCollection([temp])
             #gee_feat = gee_feat.set('Site',1)
             #fts_list = [gee_feat]
             #fts = ee.FeatureCollection(fts_list)
@@ -109,14 +108,14 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
             # which is not right... This needs fixing. 
             print(sites['NAME'])
             sites = sites.explode()
-            sites_f = []
+            sites_features = []
             for i in sites.geometry:
                 poly_coords = list(i.exterior.coords)
                 temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
-                sites_f.append(temp)
-            sites_fc=ee.FeatureCollection(sites_f)
-            sites_fc.set('Name','CA')
-        return sites_fc, bbox_fc, site_name
+                sites_features.append(temp)
+            # sites_fc=ee.FeatureCollection(sites_f)
+            # sites_fc.set('Name','CA')
+        return sites_features, bbox_geom, site_name
     else: print('not a valid output type, select gpd or ee')
 
 

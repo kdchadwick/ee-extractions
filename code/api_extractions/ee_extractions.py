@@ -35,10 +35,10 @@ def main():
   args = parser.parse_args()
   if args.wshd.lower() == 'true':
       args.wshd = True
-      type = 'USGS_basin' #for getLocation
+      input_type = 'USGS_basin' #for getLocation
       print('\nSite is USGS watershed for gage ', args.gage)
   else:
-      type = 'points'
+      input_type = 'points'
       site_to_print = pd.read_csv(args.point_csv)
       print('Sites to extract data at:')
       print(site_to_print)
@@ -74,7 +74,7 @@ def main():
   subprocess.call('cp ' + os.path.join(args.output_directory, 'ee_extractions', 'settings', 'export_coords.csv'), shell=True)
 
   #pts, bounding_box, names = getGeometry(args.wshd, args.gage, args.point_csv)
-  sites_fc, bbox_fc, site_name = getLocation(type = type, output_type = 'ee', gage = args.gage, points = args.point_csv, plot_map=True, output_directory = args.output_directory, sub_directory = '/ee_extractions')
+  sites_fc, bbox_fc, site_name = getLocation(input_type = input_type, output_type = 'ee', gage = args.gage, points = args.point_csv, plot_map=True, output_directory = args.output_directory, sub_directory = '/ee_extractions')
   extraction_export(assets, sites_fc, bbox_fc, site_name, args.output_directory, args.wshd, args.gage)
 
 if __name__ == "__main__":
