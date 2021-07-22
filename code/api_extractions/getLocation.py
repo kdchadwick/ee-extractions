@@ -24,9 +24,9 @@ def main():
 
     locs= pd.read_csv('data/coordinates.csv')
 
-    getLocation(input_type='USGS_basin', output_type='gpd', gage=11465350)
-    getLocation(input_type='points', output_type='ee', points = locs, gage='points')
-    getLocation(input_type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
+    getLocation(input_type='USGS_basin', output_type='gpd', gage=11465350, output_directory = 'test', sub_directory = 'sub')
+    #getLocation(input_type='points', output_type='ee', points = locs, gage='points')
+    #getLocation(input_type='polygon', output_type='ee', shape=ca, gage='ca', plot_map=False)
 
 
 def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plot_map=True, output_directory = np.nan, sub_directory = np.nan):
@@ -41,7 +41,7 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
         # Importing flow line geometry 
         flowlines=gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
         print('\n USGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
-        sites.to_file(output_directory + sub_directory + "/exports/sites_USGS_"+str(gage)+".geojson", driver="GeoJSON")
+        sites.to_file(os.path.join(output_directory, sub_directory, "exports","sites_USGS_"+str(gage)+".geojson"), driver="GeoJSON")
 
     elif input_type=='points':
         #import points and transform into geopandas
@@ -50,14 +50,14 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
         site_name = locs['Site Name']
         sites = gpd.GeoDataFrame(locs, geometry=gpd.points_from_xy(locs.Long, locs.Lat))
         sites = sites.set_crs('epsg:4326')
-        sites.to_file(output_directory + sub_directory + '/exports/points.geojson', driver="GeoJSON")
+        sites.to_file(os.path.join(output_directory, sub_directory, 'exports','points.geojson'), driver="GeoJSON")
         
     
     elif input_type=='polygon':
         # import polygon
         sites = shape
         sites = sites.to_crs('epsg:4326')
-        sites.to_file(output_directory + sub_directory +"/exports/polygon_site.geojson", driver="GeoJSON")
+        sites.to_file(os.path.join(output_directory, sub_directory,"exports","polygon_site.geojson"), driver="GeoJSON")
         site_name = ['polygon']
 
     else:
@@ -76,7 +76,7 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
         ctx.add_basemap(ax=loc_plot)
         plt.legend()
         if input_type=='USGS_basin': plt.title('USGS Gage at: '+site_name[0])
-        plt.savefig(output_directory + sub_directory +'/figs/extent_'+str(gage)+'.png')
+        plt.savefig(os.path.join(output_directory, sub_directory,'figs','extent_'+str(gage)+'.png'))
 
     #returning bounding box geometry as geopandas dataframe or ee feature collection
     if output_type=='gpd': return sites, bbox_gdf, site_name
