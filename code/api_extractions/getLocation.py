@@ -11,6 +11,8 @@ import os
 import json
 import ee
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 
 ee.Initialize()
 
@@ -33,6 +35,8 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
     
     if type=='USGS_basin':
         #Importing basin geometery 
+        #url = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage
+        #print(url)
         sites = gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)    
         # defining URL to access json 
         request = urllib.request.urlopen("https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/?f=json"%gage)
@@ -40,7 +44,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         site_name = [json.load(request)['features'][0]['properties']['name'].title()]
         # Importing flow line geometry 
         flowlines=gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
-        print('\n USGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
+        print('\nUSGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
         sites.to_file(output_directory + sub_directory + "/exports/sites_USGS_"+str(gage)+".geojson", driver="GeoJSON")
 
     elif type=='points':

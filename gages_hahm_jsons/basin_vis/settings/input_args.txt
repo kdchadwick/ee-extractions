@@ -1,0 +1,4 @@
+{
+  "gage_list_csv": "data/gages_hahm2019.csv",
+  "output_directory": "gages_hahm_jsons"
+}
