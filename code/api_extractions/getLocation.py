@@ -44,7 +44,7 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         site_name = [json.load(request)['features'][0]['properties']['name'].title()]
         # Importing flow line geometry 
         flowlines=gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
-        print('\nUSGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
+        print('\n\tUSGS basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
         sites.to_file(output_directory + sub_directory + "/exports/sites_USGS_"+str(gage)+".geojson", driver="GeoJSON")
 
     elif type=='points':
@@ -101,9 +101,9 @@ def getLocation(type, output_type, gage=np.nan, shape=np.nan, points=np.nan, plo
         elif type == 'USGS_basin':
            
             poly_coords = [item for item in sites.geometry[0].exterior.coords]
-            temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
+            temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords), {'Name': str(site_name[0]), 'Gage':int(gage)})
             sites_fc = ee.FeatureCollection([temp])
-            #gee_feat = gee_feat.set('Site',1)
+            #gee_feat = gee_feat.set('Site',1s)
             #fts_list = [gee_feat]
             #fts = ee.FeatureCollection(fts_list)
 
