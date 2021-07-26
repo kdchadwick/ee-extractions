@@ -1,6 +1,7 @@
 from get_data_df import get_data_df
 from getFlow import getFlow
 import pandas as pd
+import json
 import ee
 import os
 
@@ -12,6 +13,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
 
     for d in range(len(assets['gee_path'])):
       path = assets['gee_path'][d]
+      print('\n \n Extracting data from asset {}'.format(path))
       collection_short_name = assets['name'][d]+"_"
       beginning = int(assets['beginning_year'][d])
       end = int(assets['end_year'][d])
@@ -19,14 +21,12 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
 
       def extract(image):
         s = assets['scale'][d]
-        reduced = image.reduceRegion(geometry=pts,
-                                    reducer=ee.Reducer.mean(),
-                                    scale=s)
-        fts_reduced = pts.set(reduced)
+        reduced = image.reduceRegion(geometry=pts, reducer=ee.Reducer.mean(), scale=s)
+        ft = ee.Feature(pts)
+        fts_reduced = ft.set(reduced)
         return fts_reduced
 
 
-      print('\n \n Extracting data from asset {}'.format(path))
       annual_temp=pd.DataFrame()
 
       for year in range(beginning, end):
@@ -55,6 +55,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
 
       for d in range(len(assets['gee_path'])):
         path = assets['gee_path'][d]
+        print('Extracting data from asset {}'.format(path))
         collection_short_name=assets['name'][d]+"_"
         dateformat=assets['date_format'][d]
         start = assets['beginning_year'][d]
@@ -70,7 +71,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
           ft = ft.set(reduced)
           return ft
 
-        print('Extracting data from asset {}'.format(path))
+        
         annual_temp=pd.DataFrame()
         for year in range(start, end):
           print('year {}'.format(year))

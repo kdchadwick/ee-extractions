@@ -1,0 +1,11 @@
+{
+  "input_timeseries_csv": "watershed_11475560/ee_extractions/exports/watershed_extractions_w_merge_on_date.csv",
+  "output_directory": "watershed_11475560",
+  "new_directory": "False",
+  "single_site": "True",
+  "show_modis": "True",
+  "interpolate": "True",
+  "xtra_imports": "False",
+  "snow_correction": "True",
+  "snow_frac": 10
+}

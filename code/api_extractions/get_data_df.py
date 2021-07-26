@@ -1,22 +1,28 @@
 import pandas as pd
 
 def get_data_df(d, dateformat, collection_short_name, watershed):
+    #     # Dana: This isn't necessary for me/it messes things up, 
+          # Let me know if you need this still, otherwise i think we can simplify here. 
+          
+          # Erica: I think I do need it otherwise I get a KeyError:'id' when I try to do watershed extractions.
+          # There's probably a better way though :)
+    
     if watershed == True:
-        df = pd.json_normalize(d['features'])
-        df['id'] = df['properties.system:index']
-        df['id'] = pd.to_datetime(df['id'], format= dateformat)
-        df = df.set_index('id')
-        df = df.drop(df.filter(regex='index').columns, axis=1)
-        oldnames = df.columns[df.columns.str.contains('properties')]
-        df = df[df.columns[df.columns.str.contains('properties')]]
-        df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
+      df = pd.json_normalize(d['features'])
+      df['id'] = df['properties.system:index']
+      df['id'] = pd.to_datetime(df['id'], format= dateformat)
+      df = df.set_index('id')
+      df = df.drop(df.filter(regex='index').columns, axis=1)
+      oldnames = df.columns[df.columns.str.contains('properties')]
+      df = df[df.columns[df.columns.str.contains('properties')]]
+      df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
 
     else:
-        df = pd.json_normalize(d['features'])
-        df = df[df.columns[df.columns.str.contains('id')].append(df.columns[df.columns.str.contains('properties')])]
-        df['id'] = pd.to_datetime(df['id'].values, format=dateformat)
-        df = df.set_index('id')
-        oldnames = df.columns[df.columns.str.contains('properties')]
-        df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
+      df = pd.json_normalize(d['features'])
+      df = df[df.columns[df.columns.str.contains('id')].append(df.columns[df.columns.str.contains('properties')])]
+      df['id'] = pd.to_datetime(df['id'].values, format=dateformat)
+      df = df.set_index('id')
+      oldnames = df.columns[df.columns.str.contains('properties')]
+      df.columns = list(map(lambda x: x.replace('properties.', collection_short_name),oldnames))
 
     return df
