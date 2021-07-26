@@ -89,11 +89,11 @@ def main():
     print('\nTimeseries post-processing complete. Deficit being calculated...')
     
     # Calculate deficit
-    df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, single_site = args.single_site)
+    df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, dir_name=args.output_directory)
     df_pml.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'df_pml.csv'), mode='a', header=True)
 
     if args.show_modis.lower() == 'true':
-        df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, single_site = args.single_site)
+        df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, dir_name=args.output_directory)
         df_modis.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'df_modis.csv'), mode='a', header=True)
 
     else: df_modis = pd.DataFrame()
