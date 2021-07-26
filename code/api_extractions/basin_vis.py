@@ -54,7 +54,7 @@ def main():
   for gage in gages:
       print('\nGetting gage ', counter,' of', len(gages))
       #print('Getting gage ', gage)
-      sites_fc, bbox_fc, site_name = getLocation(type, output_type, gage, shape = ca, plot_map=True, output_directory = args.output_directory, sub_directory = '/basin_vis')
+      sites_fc, bbox_fc, site_name = getLocation(type, output_type, gage, shape = ca, plot_map=True, output_directory = args.output_directory, sub_directory = 'basin_vis')
       counter += 1
 
       if counter == 2:
