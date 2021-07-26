@@ -42,6 +42,7 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
         flowlines=gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/navigation/UM/flowlines?f=json&distance=1000'%gage)
         print('\n USGS Basin imported at ' + site_name[0] + 'CRS: ' + str(sites.crs))
         sites.to_file(os.path.join(output_directory, sub_directory, "exports","sites_USGS_"+str(gage)+".geojson"), driver="GeoJSON")
+        sites.to_file(os.path.join(output_directory, sub_directory, "exports","sites_USGS_"+str(gage)+"_bbox.geojson"), driver="GeoJSON")
 
     elif input_type=='points':
         #import points and transform into geopandas
@@ -69,11 +70,11 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
     
     #plotting basin on basemap
     if plot_map:
-        if input_type=='points': loc_plot = sites.to_crs(epsg=3857).plot(color='darkgreen', figsize=(8, 8), label='Points')
-        else: loc_plot = sites.to_crs(epsg=3857).boundary.plot(color='darkgreen', figsize=(8, 8), label='Site Area')
-        if input_type=='USGS_basin': flowlines.to_crs(epsg=3857).plot(ax=loc_plot, label='Flow Lines')
-        bbox_gdf.to_crs(epsg=3857).boundary.plot(ax=loc_plot, color='black', label='Bounding Box')
-        ctx.add_basemap(ax=loc_plot)
+        if input_type=='points': loc_plot = sites.plot(color='darkgreen', figsize=(8, 8), label='Points')
+        else: loc_plot = sites.boundary.plot(color='darkgreen', figsize=(8, 8), label='Site Area')
+        if input_type=='USGS_basin': flowlines.plot(ax=loc_plot, label='Flow Lines')
+        bbox_gdf.boundary.plot(ax=loc_plot, color='black', label='Bounding Box')
+        ctx.add_basemap(ax=loc_plot, crs=sites.crs.to_string())
         plt.legend()
         if input_type=='USGS_basin': plt.title('USGS Gage at: '+site_name[0])
         plt.savefig(os.path.join(output_directory, sub_directory,'figs','extent_'+str(gage)+'.png'))
