@@ -11,14 +11,13 @@ def process_timeseries(data, interp = 'True', cumulative = True):
 
     if 'pml_Ec' in df.columns:
         if 'pml_ET_Ei' not in df.columns:
-            # calculate ET and ET+interception and x8
+            # calculate ET and ET+interception
             df['pml_ET'] = (df['pml_Ec'] + df['pml_Es'])
             df['pml_ET_Ei'] = (df['pml_Ec'] + df['pml_Es'] + df['pml_Ei'])
 
     if 'modis_ET' in df.columns:
-        if 'modis_ET_x8' not in df.columns:
-            df['modis_ET_x8'] = df['modis_ET'] / 8
-            df['modis_PET_x8'] = df['modis_PET'] / 8
+        df['modis_ET'] = df['modis_ET'] / 80 # 8 day sum, scale = 0.1
+        df['modis_PET'] = df['modis_PET'] / 80 # 8 day sum, scale = 0.1
             
     if cumulative == True:
         df = wtryear_cum(df)
