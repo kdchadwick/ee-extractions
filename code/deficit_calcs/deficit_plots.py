@@ -29,7 +29,7 @@ def simple_multi_site_fig(data):
     return fig
 
 
-def facet_cum_multisite_fig(data, data_modis = None, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET', et_2 = 'modis_ET'):
+def facet_cum_multisite_fig(data, data_modis, show_modis = False, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET', et_2 = 'cum_modis_ET'):
     site_names = data['point'].unique()
     num_of_sites = len(site_names)
     fig, ax = plt.subplots(nrows=4,ncols=3, sharex = True, figsize = (20,20), dpi = 300)
@@ -58,12 +58,12 @@ def facet_cum_multisite_fig(data, data_modis = None, ppt = 'cum_prism_ppt', et_1
         axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
         cf = axShallow.plot(plot_data['id'], plot_data[et_1],'--',color='#ED9935', alpha = 0.8)
  
-        if data_modis != None:
+        if show_modis == 'True':
             plot_modis = data_modis[data_modis['point'] == site_names[i]]
             # DEFICIT
             axMain.plot(plot_modis['id'], plot_modis['D_new'], '-',color='#612fa3', label='MODIS')
             # CUMULATIVE ET
-            axShallow.plot(data_modis['id'], data_modis[et_2],'--',color='#612fa3', alpha = 0.8)
+            axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8)
 
         # Set labels
         axShallow.set_xticklabels([])

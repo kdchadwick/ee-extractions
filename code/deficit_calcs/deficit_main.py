@@ -91,21 +91,18 @@ def main():
     df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
     if args.show_modis.lower() == 'true':
         df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
-
+    else: df_modis = pd.DataFrame()
     print('\nCalculation complete.')
     
     # Plotting
     print('Saving figures to {}'.format(args.output_directory))
-    fig = plot.simple_multi_site_fig(df_pml)
+    fig = plot.simple_multi_site_fig(df_modis)
     fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'simple_multisite.png'))
     
-    if args.show_modis.lower() == 'true':
-        fig = plot.facet_cum_multisite_fig(data = df_pml, data_modis = df_modis)
-        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
-    else:
-        fig = plot.facet_cum_multisite_fig(data = df_pml)
-        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
-    
+
+    fig = plot.facet_cum_multisite_fig(data = df_pml, data_modis = df_modis, show_modis = args.show_modis)
+    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
+
     '''
     ################## ORIGINAL VERSION ##################
     data, interpolated_data = import_data()
