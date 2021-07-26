@@ -11,6 +11,8 @@ import os
 import json
 import ee
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 
 ee.Initialize()
 
@@ -33,6 +35,8 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
     
     if input_type=='USGS_basin':
         #Importing basin geometery 
+        #url = 'https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage
+        #print(url)
         sites = gpd.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)    
         # defining URL to access json 
         request = urllib.request.urlopen("https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/?f=json"%gage)
@@ -85,10 +89,10 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
         # if want outputs as ee feature collections - this section will run
         bbox_coords = [item for item in bbox_gdf.geometry[0].exterior.coords]
         bbox_geom = ee.Geometry.Polygon(bbox_coords)
+        sites_features = []
         # creating a gee feature from points
         if input_type=='points': 
             coordinates = locs[['Long', 'Lat']].values.tolist()
-            sites_features = []
             # Below gets a feature collection from sites, Erica modified to return a list of features
             for i in range(len(coordinates)):
                 temp = ee.Feature(ee.Geometry.Point(coords=coordinates[i]), {'Name': locs['Site Name'][i]})
@@ -97,9 +101,9 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
             #sites_fc = ee.FeatureCollection(sites_fl)
         elif input_type == 'USGS_basin':
             poly_coords = [item for item in sites.geometry[0].exterior.coords]
-            sites_features = ee.Geometry.Polygon(coords=poly_coords)
-            #sites_features = ee.FeatureCollection([temp])
-            #gee_feat = gee_feat.set('Site',1)
+            temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords), {'Name': str(site_name[0]), 'Gage':int(gage)})
+            sites_features = ee.FeatureCollection([temp])
+            #gee_feat = gee_feat.set('Site',1s)
             #fts_list = [gee_feat]
             #fts = ee.FeatureCollection(fts_list)
 
@@ -109,7 +113,6 @@ def getLocation(input_type, output_type, gage=np.nan, shape=np.nan, points=np.na
             # which is not right... This needs fixing. 
             print(sites['NAME'])
             sites = sites.explode()
-            sites_features = []
             for i in sites.geometry:
                 poly_coords = list(i.exterior.coords)
                 temp = ee.Feature(ee.Geometry.Polygon(coords=poly_coords))
