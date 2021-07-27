@@ -1,19 +1,13 @@
 
 from wtryear_cum import wtryear_cum
 
-def process_timeseries(data, interp = 'True', cumulative = True, single_site = False):
-    if single_site.lower() == 'false':
-        df = data.copy()
-        if interp == 'True':
-            for i in df['point'].unique():
-                temp = df[df['point'] == i]
-                temp = temp.interpolate(method='linear', limit = 16, limit_direction='both')
-                df[df['point'] == i] = temp     
-    else:
-        df = data.copy()
-        if interp == 'True':
-            df = df.interpolate(method='linear',  limit = 16, limit_direction='both')
-
+def process_timeseries(data, interp = 'True', cumulative = True, single_site = False, out_dir=np.nan):
+    df = data.copy()
+    if 'point' not in df.columns: df['point']=out_dir
+    for i in df['point'].unique():
+        temp = df[df['point'] == i]
+        temp = temp.interpolate(method='linear', limit = 16, limit_direction='both', limit_area='inside')
+        df[df['point'] == i] = temp     
 
     if 'pml_Ec' in df.columns:
         if 'pml_ET_Ei' not in df.columns:

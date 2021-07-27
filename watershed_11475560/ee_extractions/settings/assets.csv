@@ -1,5 +1,0 @@
-,name,gee_path,date_format,scale,beginning_year,end_year
-0,prism,OREGONSTATE/PRISM/AN81d,%Y%m%d,500.0,2001,2020
-1,pml,CAS/IGSNRR/PML/V2,%Y-%m-%d,500.0,2003,2017
-2,modis,MODIS/006/MOD16A2,%Y_%m_%d,250.0,2001,2020
-3,modis,MODIS/006/MOD10A1,%Y_%m_%d,500.0,2001,2021

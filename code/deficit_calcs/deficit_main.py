@@ -84,7 +84,7 @@ def main():
             sys.exit()
     
     # Interpolate Data & get ET columns for MODIS and PML
-    df = process_timeseries(data, interp = 'True', cumulative = True, single_site = args.single_site)
+    df = process_timeseries(data, interp = 'True', cumulative = True, single_site = args.single_site, out_dir=args.output_directory)
     df.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'post_processed_timeseries.csv'), mode='a', header=True)
     print('\nTimeseries post-processing complete. Deficit being calculated...')
     
