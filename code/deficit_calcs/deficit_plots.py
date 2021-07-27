@@ -13,6 +13,56 @@ matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
 ################## ERICA PLOTS ##################
 
+def single_site_fig(data, data_modis, show_modis = False, ppt = 'cum_prism_ppt', et_1 = 'cum_pml_ET', et_2 = 'cum_modis_ET', directory_name = np.nan):
+   # site_names = data['point'].unique()
+   # num_of_sites = len(site_names)
+    fig, ax = plt.subplots(nrows=1,ncols=1, sharex = True, figsize = (20,20), dpi = 300)
+    #ax = ax.flatten()
+
+   # for i in range(num_of_sites):
+        
+    gs = gridspec.GridSpec(1, 1) #these need to match subplots above
+
+    ax = plt.subplot(gs[0])
+    axMain = ax
+    plt.sca(axMain) #sca = set current axes
+
+    #all the axes
+    divider = make_axes_locatable(axMain)
+    axShallow = divider.append_axes("top", size="50%", pad=0.3, sharex=axMain) #middle, needs to have cf = in front
+    #axShallow2 = divider.append_axes("top", size="80%", pad=0.1, sharex=axMain) #top
+    #axMain is the bottom
+    
+    plot_data = data.copy()
+
+    # DEFICITS
+    axMain.plot(plot_data['id'], plot_data['D'], '-',color='#ED9935', label='PML')
+    #axShallow2.plot(plot_data['id'], plot_data['S_agg'], '-',color='#ED9935', label='PML')
+    #axShallow2.axhline(y=0)
+    # CUMULATIVE ET & PRECIP
+    axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)', alpha=0.5)
+    axShallow.fill_between(plot_data['id'], 0, plot_data['cum_q_mm'], color='darkblue', label='Q (mm)', alpha=0.25)
+    cf = axShallow.plot(plot_data['id'], plot_data[et_1],'--',color='#ED9935', alpha = 0.8, linewidth=4)
+
+    if show_modis == 'True':
+        plot_modis = data_modis.copy()
+        # DEFICIT
+        axMain.plot(plot_modis['id'], plot_modis['D'], '-',color='#612fa3', label='MODIS')
+        # CUMULATIVE ET
+        axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8, linewidth=4)
+        axMain.plot(plot_modis['id'], plot_modis['S_agg']*-1, '-',color='darkgreen', label='Storage')
+    # Set labels
+    #axShallow.set_xticklabels([])
+    #axShallow2.set_xticklabels([])
+    axMain.legend(loc='best')
+    axShallow.set_title(directory_name)
+    
+    # Y axis labels
+    axShallow.set_ylabel('P and ET (mm)')
+    axMain.set_ylabel('Deficit (mm)')
+
+    return fig
+
 def simple_multi_site_fig(data):
     site_names = data['point'].unique()
     num_of_sites = len(site_names)
@@ -20,7 +70,7 @@ def simple_multi_site_fig(data):
     ax = ax.flatten()
     for i in range(num_of_sites):
         plot_data = data[data['point'] == site_names[i]]
-        ax[i].plot(plot_data['id'], plot_data['D_new'], '-', color='#ED9935')#, label='MODIS 10x10')
+        ax[i].plot(plot_data['id'], plot_data['D'], '-', color='#ED9935')#, label='MODIS 10x10')
         ax[i].set_ylabel('Deficit (mm)')
         ax[i].set_title(site_names[i])
        # ax[i].xticks(rotation = 'vertical')
@@ -52,7 +102,7 @@ def facet_cum_multisite_fig(data, data_modis, show_modis = False, ppt = 'cum_pri
         plot_data = data[data['point'] == site_names[i]]
 
         # DEFICITS
-        axMain.plot(plot_data['id'], plot_data['D_new'], '-',color='#ED9935', label='PML')
+        axMain.plot(plot_data['id'], plot_data['D'], '-',color='#ED9935', label='PML')
         
         # CUMULATIVE ET & PRECIP
         axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
@@ -61,9 +111,10 @@ def facet_cum_multisite_fig(data, data_modis, show_modis = False, ppt = 'cum_pri
         if show_modis == 'True':
             plot_modis = data_modis[data_modis['point'] == site_names[i]]
             # DEFICIT
-            axMain.plot(plot_modis['id'], plot_modis['D_new'], '-',color='#612fa3', label='MODIS')
+            axMain.plot(plot_modis['id'], plot_modis['D'], '-',color='#612fa3', label='MODIS')
             # CUMULATIVE ET
             axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8)
+            axShallow.fill_between(plot_modis['id'], 0, plot_modis[ppt],color='#b1d6f0', label='Precipitation (mm)')
 
         # Set labels
         axShallow.set_xticklabels([])

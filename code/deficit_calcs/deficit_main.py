@@ -31,6 +31,7 @@ def main():
     parser.add_argument('input_timeseries_csv', type=str)
     parser.add_argument('output_directory', type=str)
     parser.add_argument('-new_directory', type=str, default='False')
+    parser.add_argument('-single_site', default = 'False')
     parser.add_argument('-show_modis', type = str, default = 'False')
     parser.add_argument('-interpolate', type=str, default='True')
     parser.add_argument('-xtra_imports', type=str, default='False')
@@ -83,25 +84,35 @@ def main():
             sys.exit()
     
     # Interpolate Data & get ET columns for MODIS and PML
-    df = process_timeseries(data, interp = 'True', cumulative = True)
+    df = process_timeseries(data, interp = 'True', cumulative = True, single_site = args.single_site)
     df.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'post_processed_timeseries.csv'), mode='a', header=True)
     print('\nTimeseries post-processing complete. Deficit being calculated...')
     
     # Calculate deficit
-    df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
+    df_pml = deficit_calcs(df, et_type = 'pml_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, dir_name=args.output_directory)
+    df_pml.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'df_pml.csv'), mode='a', header=True)
+
     if args.show_modis.lower() == 'true':
-        df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac)
+        df_modis = deficit_calcs(df, et_type = 'modis_ET', snow_correction = args.snow_correction, snow_frac = args.snow_frac, dir_name=args.output_directory)
+        df_modis.to_csv(os.path.join(args.output_directory, 'deficit','exports', 'df_modis.csv'), mode='a', header=True)
+
     else: df_modis = pd.DataFrame()
     print('\nCalculation complete.')
     
+    
     # Plotting
     print('Saving figures to {}'.format(args.output_directory))
-    fig = plot.simple_multi_site_fig(df_modis)
-    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'simple_multisite.png'))
-    
 
-    fig = plot.facet_cum_multisite_fig(data = df_pml, data_modis = df_modis, show_modis = args.show_modis)
-    fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
+    if args.single_site.lower() == 'false':
+        fig = plot.simple_multi_site_fig(df_modis)
+        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'simple_multisite.png'))
+        
+
+        fig = plot.facet_cum_multisite_fig(data = df_pml, data_modis = df_modis, show_modis = args.show_modis)
+        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'facet_cum_multisite.png'))
+    else:
+        fig = plot.single_site_fig(data = df_pml, data_modis = df_modis, show_modis = args.show_modis, directory_name = args.output_directory)
+        fig.savefig(os.path.join(args.output_directory, 'deficit','figs', 'timeseries_'+ args.output_directory + '.png'))
 
     '''
     ################## ORIGINAL VERSION ##################

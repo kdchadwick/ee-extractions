@@ -74,7 +74,7 @@ def main():
   subprocess.call('cp ' + os.path.join(args.output_directory, 'ee_extractions', 'settings', 'export_coords.csv'), shell=True)
 
   #pts, bounding_box, names = getGeometry(args.wshd, args.gage, args.point_csv)
-  sites_fc, bbox_fc, site_name = getLocation(input_type = input_type, output_type = 'ee', gage = args.gage, points = args.point_csv, plot_map=True, output_directory = args.output_directory, sub_directory = '/ee_extractions')
+  sites_fc, bbox_fc, site_name = getLocation(input_type = input_type, output_type = 'ee', gage = args.gage, points = args.point_csv, plot_map=True, output_directory = args.output_directory, sub_directory = 'ee_extractions')
   extraction_export(assets, sites_fc, bbox_fc, site_name, args.output_directory, args.wshd, args.gage)
 
 if __name__ == "__main__":
