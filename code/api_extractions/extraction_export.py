@@ -41,7 +41,7 @@ def extraction_export(assets, pts, bounding_box, names, outputfile, watershed, g
       
 
     all_points = all_points.append(temp_point)
-    flow = getFlow(gage)
+    flow = getFlow(gage, start=str(assets['beginning_year'].min())+'-01-01')
     all_points = pd.merge(all_points, flow, how = 'outer', on = ['id'], sort = True)
     all_points.to_csv(os.path.join(outputfile, 'ee_extractions', 'exports', 'watershed_extractions_w_merge_on_date.csv'), mode='a', header=True)
 

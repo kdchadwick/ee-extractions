@@ -14,8 +14,8 @@ def interp_et(df):
         df['pml_ET_Ei'] = df['pml_ET_Ei'].interpolate()
 
     if 'modis_ET' in df.columns:
-        df['modis_ET'] = df['modis_ET'].interpolate() / 8
-        df['modis_PET'] = df['modis_PET'].interpolate() /8
+        df['modis_ET'] = df['modis_ET'].interpolate() / 80
+        df['modis_PET'] = df['modis_PET'].interpolate() /80
 
 
     return df

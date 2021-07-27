@@ -21,9 +21,8 @@ def deficit_calcs(df, et_type, snow_correction = 'True', snow_frac = 10, dir_nam
     if snow_correction == 'True': df.loc[df['modis_NDSI_Snow_Cover'] > snow_frac, 'ET'] = 0
     df['A'] = df['ET'] - df['prism_ppt']
     df['D'] = 0
-    if 'q_mm' in df.columns: 
-        df['S'] = df['prism_ppt'] - df['ET'] - df['q_mm']
-        df['point']=dir_name
+    if 'q_mm' in df.columns: df['S'] = df['prism_ppt'] - df['ET'] - df['q_mm']
+    if 'point' not in df.columns: df['point']=dir_name
 
     new_data = pd.DataFrame()
 
