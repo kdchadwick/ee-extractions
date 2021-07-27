@@ -37,7 +37,7 @@ def single_site_fig(data, data_modis, show_modis = False, ppt = 'cum_prism_ppt',
 
     # DEFICITS
     axMain.plot(plot_data['id'], plot_data['D'], '-',color='#ED9935', label='PML')
-    #axShallow2.plot(plot_data['id'], plot_data['S_agg'], '-',color='#ED9935', label='PML')
+    axMain.plot(plot_data['id'], plot_data['S_agg']*-1, '-',color='darkgreen', label='P-Q-ET(PML)')
     #axShallow2.axhline(y=0)
     # CUMULATIVE ET & PRECIP
     axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)')
@@ -50,7 +50,7 @@ def single_site_fig(data, data_modis, show_modis = False, ppt = 'cum_prism_ppt',
         axMain.plot(plot_modis['id'], plot_modis['D'], '-',color='#612fa3', label='MODIS')
         # CUMULATIVE ET
         axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8)
-        axMain.plot(plot_modis['id'], plot_modis['S_agg']*-1, '-',color='darkgreen', label='Storage')
+       # axMain.plot(plot_modis['id'], plot_modis['S_agg']*-1, '-',color='darkgreen', label='Storage')
     # Set labels
     #axShallow.set_xticklabels([])
     #axShallow2.set_xticklabels([])

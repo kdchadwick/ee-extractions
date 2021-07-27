@@ -6,5 +6,5 @@
 
 
 #input_timeseries.csv, output_directory, -single_site -new_directory, -show_modis, -interpolate, -xtra_imports, -snow_correction, -snow_frac
-python code/deficit_calcs/deficit_main.py watershed_11475560/ee_extractions/exports/watershed_extractions_w_merge_on_date.csv watershed_11475560 -single_site True -new_directory False -show_modis True -interpolate True -xtra_imports False
+python3 code/deficit_calcs/deficit_main.py watershed_11111500/ee_extractions/exports/watershed_extractions_w_merge_on_date.csv watershed_11111500 -single_site True -new_directory False -show_modis True -interpolate True -xtra_imports False
 
