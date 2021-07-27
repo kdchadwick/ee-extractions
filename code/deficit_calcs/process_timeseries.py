@@ -1,4 +1,4 @@
-
+import numpy as np
 from wtryear_cum import wtryear_cum
 
 def process_timeseries(data, interp = 'True', cumulative = True, single_site = False, out_dir=np.nan):
