@@ -1,9 +1,5 @@
 ﻿name,gee_path,date_format,scale,beginning_year,end_year
 prism,OREGONSTATE/PRISM/AN81d,%Y%m%d,500,2003,2020
 pml,CAS/IGSNRR/PML/V2,%Y-%m-%d,500,2003,2017
-landsat,UMT/NTSG/v2/LANDSAT/GPP,%Y%j,30,2003,2020
 modis,MODIS/006/MOD16A2,%Y_%m_%d,250,2003,2020
-modis,MODIS/006/MOD13Q1,%Y_%m_%d,250,2003,2020
-modis,MODIS/006/MOD17A2H,%Y_%m_%d,250,2003,2020
-modis,MODIS/006/MYD17A2H,%Y_%m_%d,250,2003,2020
 modis,MODIS/006/MOD10A1,%Y_%m_%d,500,2003,2021

@@ -29,7 +29,7 @@ def main():
   parser.add_argument('output_directory', type=str)
   parser.add_argument('-point_csv', type=str)
   parser.add_argument('-wshd', type=str, default='False')
-  parser.add_argument('-gage', default=np.nan, type=int)
+  parser.add_argument('-gage', default=np.nan, type=str)
 
   print('\n \n ee_extractions.py is parsing and cleaning arguments \n')
   args = parser.parse_args()
@@ -43,7 +43,7 @@ def main():
       print('Sites to extract data at:')
       print(site_to_print)
 
-  if args.wshd == True & math.isnan(args.gage):
+  if args.wshd == True & math.isnan(int(args.gage)):
     print('WARNING: No USGS gage is specified for watershed extraction. \nExiting... \n \n \n')
     sys.exit()
 

@@ -21,40 +21,42 @@ def single_site_fig(data, data_modis, show_modis = False, ppt = 'cum_prism_ppt',
 
    # for i in range(num_of_sites):
         
-    gs = gridspec.GridSpec(1, 1) #these need to match subplots above
+    gs = gridspec.GridSpec(1, 1) #these need to match subplots(X,Y) above
 
     ax = plt.subplot(gs[0])
     axMain = ax
     plt.sca(axMain) #sca = set current axes
 
-    #all the axes
+    #all the axes, axMain is bottom
     divider = make_axes_locatable(axMain)
     axShallow = divider.append_axes("top", size="50%", pad=0.3, sharex=axMain) #middle, needs to have cf = in front
     #axShallow2 = divider.append_axes("top", size="80%", pad=0.1, sharex=axMain) #top
-    #axMain is the bottom
-    
+   
+    axMain.axhline(y=0, color = 'darkgrey')
+
     plot_data = data.copy()
 
     # DEFICITS
-    axMain.plot(plot_data['id'], plot_data['D'], '-',color='#ED9935', label='PML')
-    #axShallow2.plot(plot_data['id'], plot_data['S_agg'], '-',color='#ED9935', label='PML')
-    #axShallow2.axhline(y=0)
+    axMain.plot(plot_data['id'], plot_data['D'], '-',color='#ED9935', label='Deficit (PML)')
+    axMain.plot(plot_data['id'], plot_data['S_agg']*-1, '--',color='#3acf52', label='P-Q-ET (PML)')
+    
     # CUMULATIVE ET & PRECIP
     axShallow.fill_between(plot_data['id'], 0, plot_data[ppt],color='#b1d6f0', label='Precipitation (mm)', alpha=0.5)
     axShallow.fill_between(plot_data['id'], 0, plot_data['cum_q_mm'], color='darkblue', label='Q (mm)', alpha=0.25)
-    cf = axShallow.plot(plot_data['id'], plot_data[et_1],'--',color='#ED9935', alpha = 0.8, linewidth=4)
+    cf = axShallow.plot(plot_data['id'], plot_data[et_1],'--',color='#ED9935', alpha = 0.8, label = 'ET (PML)', linewidth=3)
 
     if show_modis == 'True':
         plot_modis = data_modis.copy()
         # DEFICIT
-        axMain.plot(plot_modis['id'], plot_modis['D'], '-',color='#612fa3', label='MODIS')
+        axMain.plot(plot_modis['id'], plot_modis['D'], '-',color='#612fa3', label='Deficit (MODIS)')
         # CUMULATIVE ET
-        axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8, linewidth=4)
-        axMain.plot(plot_modis['id'], plot_modis['S_agg']*-1, '-',color='darkgreen', label='Storage')
+        axShallow.plot(plot_modis['id'], plot_modis[et_2],'--',color='#612fa3', alpha = 0.8, linewidth=4, label = 'ET (MODIS)')
+        axMain.plot(plot_modis['id'], plot_modis['S_agg']*-1, '--',color='#05630e', label='P-Q-ET (MODIS)')
     # Set labels
     #axShallow.set_xticklabels([])
     #axShallow2.set_xticklabels([])
     axMain.legend(loc='best')
+    axShallow.legend(loc='best')
     axShallow.set_title(directory_name)
     
     # Y axis labels

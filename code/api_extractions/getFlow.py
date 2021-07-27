@@ -14,7 +14,7 @@ import sys
 
 ee.Initialize()
 
-def getFlow(gage, start = '1988-01-01', stop = '2020-01-01'):
+def getFlow(gage, start = '2003-01-01', stop = '2021-07-01'):
     print('\n running getFlow function from getFlow.py')
     site = str(gage)
     basin = gp.read_file('https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/USGS-%s/basin?f=json'%gage)
